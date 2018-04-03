@@ -1,2 +1,3 @@
 Qconfig.py
 *.pyc
+.ipynb_checkpoints/*
