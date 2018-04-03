@@ -1,0 +1,7 @@
+scipy
+Cython
+qutip
+qiskit
+IBMQuantumExperience
+tqdm
+executor
