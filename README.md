@@ -1,6 +1,6 @@
 # PBLT-Quantum-Autoencoder
 
-## Github Setup
+## GitHub Setup
 Clone this repository: https://help.github.com/articles/cloning-a-repository/
 
 To commit, set up ssh keys: https://help.github.com/articles/connecting-to-github-with-ssh/
@@ -33,3 +33,23 @@ jupyter notebook
 ```
 
 And you're up and running! You can use the command `deactivate` in the shell at any time to exit the virtualenv.
+
+## GitHub Workflow
+
+### To commit changes:
+```bash
+git add <file1> <file2>
+git commit -am "<what you added or changed>"
+```
+
+### To squash changes:
+```bash
+git rebase -i HEAD~<number of commits since last push>
+```
+
+### To push changes:
+```bash
+# VERY IMPORTANT to pull FIRST
+git pull
+git push
+```
