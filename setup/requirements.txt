@@ -1,7 +1,10 @@
+numpy
 scipy
 Cython
 qutip
 qiskit
 IBMQuantumExperience
+pyquil
+quantum-grove
 tqdm
 executor
