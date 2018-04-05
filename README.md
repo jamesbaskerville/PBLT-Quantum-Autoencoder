@@ -1,14 +1,15 @@
 # PBLT-Quantum-Autoencoder
 
-## Github
+## Github Setup
 Clone this repository: https://help.github.com/articles/cloning-a-repository/
+
 To commit, set up ssh keys: https://help.github.com/articles/connecting-to-github-with-ssh/
 
 ## Requirements
 
 You must have Python 3 to use this project.
 
-## Setup
+## Environment Setup
 
 ##### The `env_setup.sh` file has code to create your virtual environment and install all requirements for the project.
 
