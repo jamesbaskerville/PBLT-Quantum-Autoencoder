@@ -1,5 +1,9 @@
 # PBLT-Quantum-Autoencoder
 
+## Github
+Clone this repository: https://help.github.com/articles/cloning-a-repository/
+To commit, set up ssh keys: https://help.github.com/articles/connecting-to-github-with-ssh/
+
 ## Requirements
 
 You must have Python 3 to use this project.
