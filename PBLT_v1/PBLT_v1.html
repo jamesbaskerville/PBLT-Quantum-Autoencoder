@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -11797,7 +11797,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
@@ -11820,12 +11820,55 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[102]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># arbitrary rotation gate on one qubit</span>
-<span class="k">def</span> <span class="nf">arb_rot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">rx</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span><span class="o">*</span><span class="n">ry</span><span class="p">(</span><span class="n">ay</span><span class="p">)</span><span class="o">*</span><span class="n">rz</span><span class="p">(</span><span class="n">az</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># apply given single-qubit gate to any qubit in system of n qubits</span>
+<span class="k">def</span> <span class="nf">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gate</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="n">lst</span><span class="p">[</span><span class="n">tgt</span><span class="p">]</span> <span class="o">=</span> <span class="n">gate</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+
+<span class="c1"># create tensored identity in hilbert space of n qubits</span>
+<span class="k">def</span> <span class="nf">tenseye</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="p">([</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+
+<span class="c1"># create operator from product of all gates in a circuit</span>
+<span class="k">def</span> <span class="nf">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">):</span>
+    <span class="n">prod</span> <span class="o">=</span> <span class="n">tenseye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">gates</span><span class="p">:</span>
+        <span class="n">prod</span> <span class="o">=</span> <span class="n">prod</span> <span class="o">*</span> <span class="n">gate</span>
+    <span class="k">return</span> <span class="n">prod</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># arbitrary rotation/controlled rotation gates</span>
+<span class="c1"># https://arxiv.org/abs/quant-ph/9503016</span>
+
+<span class="c1"># ROT = Rz(alpha) * Ry(theta) * Rz(beta)</span>
+<span class="k">def</span> <span class="nf">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">rz</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+
+<span class="c1"># CROT = A * CNOT * B * CNOT * C</span>
+<span class="c1"># A = Rz(alpha)*Ry(theta / 2)</span>
+<span class="c1"># B = Ry(-theta / 2) * Rz(-(alpha + beta) / 2)</span>
+<span class="c1"># C = Rz((beta - alpha) / 2)</span>
+<span class="k">def</span> <span class="nf">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">ry</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">rz</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">rz</span><span class="p">((</span><span class="n">beta</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">tensor</span><span class="p">(</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">tensor</span><span class="p">(</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">tensor</span><span class="p">(</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)))))</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">cnot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">cnot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span>
 </pre></div>
 
 </div>
@@ -11843,11 +11886,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[91]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_gates</span><span class="p">)])</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11867,41 +11909,102 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[83]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># R1 - R4</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create circuit from parameters</span>
+<span class="k">def</span> <span class="nf">get_circuit_gates</span><span class="p">(</span><span class="n">num_gates</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="n">gates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tenseye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_gates</span><span class="p">)])</span>
 
-<span class="c1"># R5 - R7   controlled by qubit 0</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="c1">#gates[gate_num] = arb_rot(ax, ay, az)</span>
+    <span class="c1"># R1 - R4</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gate_num</span> <span class="o">-</span> <span class="mi">0</span><span class="p">)</span>
 
-<span class="c1"># R8 - R10  controlled by qubit 1</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="c1">#gates[gate_num] = arb_rot(ax, ay, az)</span>
+    <span class="c1"># R5 - R7 controlled by qubit 0</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">4</span><span class="p">])</span>
 
-<span class="c1"># R11 - R13 controlled by qubit 2</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="c1">#gates[gate_num] = arb_rot(ax, ay, az)</span>
+    <span class="c1"># R8 - R10 controlled by qubit 1</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">7</span><span class="p">])</span>
 
-<span class="c1"># R14 - R16 controlled by qubit 3</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="c1">#gates[gate_num] = arb_rot(ax, ay, az)</span>
+    <span class="c1"># R11 - R13 controlled by qubit 2</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">10</span><span class="p">])</span>
 
-<span class="c1"># R17 - R20</span>
-<span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ay</span><span class="p">,</span> <span class="n">az</span><span class="p">)</span>
+    <span class="c1"># R14 - R16 controlled by qubit 3</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">13</span><span class="p">])</span>
+
+    <span class="c1"># R17 - R20</span>
+    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">gate_num</span> <span class="p">:</span> <span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">gate_num</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gate_num</span> <span class="o">-</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gates</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[94]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gates</span> <span class="o">=</span> <span class="n">get_circuit_gates</span><span class="p">(</span><span class="n">num_gates</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[101]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gate_product</span> <span class="o">=</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
+<span class="n">gate_product</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[101]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2, 2, 2, 2], [2, 2, 2, 2]], shape = (16, 16), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}1.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\\0.0 & 1.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\\0.0 & 0.0 & 1.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\\0.0 & 0.0 & 0.0 & 1.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\\0.0 & 0.0 & 0.0 & 0.0 & 1.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 0.0\\\vdots & \vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \vdots & \vdots & \vdots\\0.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 1.0 & 0.0 & 0.0 & 0.0 & 0.0\\0.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 1.0 & 0.0 & 0.0 & 0.0\\0.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 1.0 & 0.0 & 0.0\\0.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 1.0 & 0.0\\0.0 & 0.0 & 0.0 & 0.0 & 0.0 & \cdots & 0.0 & 0.0 & 0.0 & 0.0 & 1.0\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
 </div>
 </div>
 
