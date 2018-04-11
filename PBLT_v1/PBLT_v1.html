@@ -11820,7 +11820,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[102]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># apply given single-qubit gate to any qubit in system of n qubits</span>
@@ -11848,14 +11848,14 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[136]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># arbitrary rotation/controlled rotation gates</span>
 <span class="c1"># https://arxiv.org/abs/quant-ph/9503016</span>
 
 <span class="c1"># ROT = Rz(alpha) * Ry(theta) * Rz(beta)</span>
-<span class="k">def</span> <span class="nf">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
     <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span>
     <span class="k">return</span> <span class="n">rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">rz</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
 
@@ -11864,6 +11864,7 @@ div#notebook {
 <span class="c1"># B = Ry(-theta / 2) * Rz(-(alpha + beta) / 2)</span>
 <span class="c1"># C = Rz((beta - alpha) / 2)</span>
 <span class="k">def</span> <span class="nf">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
     <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">ry</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
     <span class="n">B</span> <span class="o">=</span> <span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">rz</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
@@ -11888,68 +11889,19 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[203]:</div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
-
-<span class="c1"># num_params total</span>
-<span class="c1"># first 3n : outside blue box</span>
-<span class="c1"># last 3n : outside blue box</span>
-<span class="c1"># each of n blue box: (n-1) *3 params</span>
-<span class="n">first_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span>
-<span class="n">last_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:]</span>
-<span class="n">blue_box_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span>
-<span class="n">blue_box_params</span> <span class="o">=</span> <span class="n">blue_box_params</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">split_params</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">split_params</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">recombine_params</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">first</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">mid</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">last</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-
-<span class="c1"># check that split works</span>
-<span class="n">split</span> <span class="o">=</span> <span class="n">split_params</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-<span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">first_params</span><span class="p">,</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">blue_box_params</span><span class="p">,</span> <span class="n">split</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">last_params</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[203]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(array([ True,  True,  True,  True,  True,  True,  True,  True,  True,
-         True,  True,  True]), array([[[ True,  True,  True],
-         [ True,  True,  True],
-         [ True,  True,  True]],
- 
-        [[ True,  True,  True],
-         [ True,  True,  True],
-         [ True,  True,  True]],
- 
-        [[ True,  True,  True],
-         [ True,  True,  True],
-         [ True,  True,  True]],
- 
-        [[ True,  True,  True],
-         [ True,  True,  True],
-         [ True,  True,  True]]]), array([ True,  True,  True,  True,  True,  True,  True,  True,  True,
-         True,  True,  True]))</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -11966,52 +11918,52 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[149]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create circuit from parameters</span>
-<span class="k">def</span> <span class="nf">get_circuit_gates</span><span class="p">(</span><span class="n">num_gates</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-    <span class="n">gates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tenseye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_gates</span><span class="p">)])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># # create circuit from parameters</span>
+<span class="c1"># def get_circuit_gates(num_gates, params):</span>
+<span class="c1">#     gates = np.array([tenseye(4) for _ in range(num_gates)])</span>
 
-    <span class="c1"># R1 - R4</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gate_num</span> <span class="o">-</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1">#     # R1 - R4</span>
+<span class="c1">#     for gate_num in range(0, 4):</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 0)</span>
 
-    <span class="c1"># R5 - R7 controlled by qubit 0</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
-        <span class="n">control</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">4</span><span class="p">])</span>
+<span class="c1">#     # R5 - R7 controlled by qubit 0</span>
+<span class="c1">#     for gate_num in range(4, 7):</span>
+<span class="c1">#         control = 0</span>
+<span class="c1">#         targets = [1, 2, 3]</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 4])</span>
 
-    <span class="c1"># R8 - R10 controlled by qubit 1</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-        <span class="n">control</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">7</span><span class="p">])</span>
+<span class="c1">#     # R8 - R10 controlled by qubit 1</span>
+<span class="c1">#     for gate_num in range(7, 10):</span>
+<span class="c1">#         control = 1</span>
+<span class="c1">#         targets = [0, 2, 3]</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 7])</span>
 
-    <span class="c1"># R11 - R13 controlled by qubit 2</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
-        <span class="n">control</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">10</span><span class="p">])</span>
+<span class="c1">#     # R11 - R13 controlled by qubit 2</span>
+<span class="c1">#     for gate_num in range(10, 13):</span>
+<span class="c1">#         control = 2</span>
+<span class="c1">#         targets = [0, 1, 3]</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 10])</span>
 
-    <span class="c1"># R14 - R16 controlled by qubit 3</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
-        <span class="n">control</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">targets</span><span class="p">[</span><span class="n">gate_num</span> <span class="o">-</span> <span class="mi">13</span><span class="p">])</span>
+<span class="c1">#     # R14 - R16 controlled by qubit 3</span>
+<span class="c1">#     for gate_num in range(13, 16):</span>
+<span class="c1">#         control = 3</span>
+<span class="c1">#         targets = [0, 1, 2]</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 13])</span>
 
-    <span class="c1"># R17 - R20</span>
-    <span class="k">for</span> <span class="n">gate_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span>
-        <span class="n">gates</span><span class="p">[</span><span class="n">gate_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">arb_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gate_num</span> <span class="o">-</span> <span class="mi">16</span><span class="p">)</span>
+<span class="c1">#     # R17 - R20</span>
+<span class="c1">#     for gate_num in range(16, 20):</span>
+<span class="c1">#         alpha, theta, beta = params[gate_num]</span>
+<span class="c1">#         gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 16)</span>
 
-    <span class="k">return</span> <span class="n">gates</span>
+<span class="c1">#     return gates</span>
 </pre></div>
 
 </div>
@@ -12021,10 +11973,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gates</span> <span class="o">=</span> <span class="n">get_circuit_gates</span><span class="p">(</span><span class="n">num_gates</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># gate_product = gate_prod(n, gates)</span>
+<span class="c1"># gate_product</span>
 </pre></div>
 
 </div>
@@ -12034,11 +11987,63 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gate_product</span> <span class="o">=</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
-<span class="n">gate_product</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">rot_params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rot_params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">blue_box</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">):</span>
+    <span class="n">p_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c1">#print (tgt, ctrl)</span>
+        <span class="k">if</span> <span class="n">tgt</span> <span class="o">==</span> <span class="n">ctrl</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">rot_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">p_index</span><span class="p">]</span>
+        <span class="n">p_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rot_params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">create_circuit</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">all_params</span><span class="p">):</span>
+    <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># split parameters</span>
+    <span class="n">f</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">split_params</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">all_params</span><span class="p">)</span>
+    
+    <span class="c1"># front wrapper</span>
+    <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapper</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+    
+    <span class="c1"># blue boxes</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blue_box</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">))</span>
+    
+    <span class="c1"># back wrapper</span>
+    <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapper</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># testing</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">num_params</span><span class="p">)</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">create_circuit</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<span class="c1"># for ctrl, blue_box_params in enumerate(m_params):</span>
+<span class="c1">#     blue_box(n, ctrl, blue_box_params)</span>
+<span class="n">U</span>
 </pre></div>
 
 </div>
@@ -12051,7 +12056,29 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[115]:</div>
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>4 [1. 1. 1.] 0 1
+4 [1. 1. 1.] 0 2
+4 [1. 1. 1.] 0 3
+4 [1. 1. 1.] 1 0
+4 [1. 1. 1.] 1 2
+4 [1. 1. 1.] 1 3
+4 [1. 1. 1.] 2 0
+4 [1. 1. 1.] 2 1
+4 [1. 1. 1.] 2 3
+4 [1. 1. 1.] 3 0
+4 [1. 1. 1.] 3 1
+4 [1. 1. 1.] 3 2
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[78]:</div>
 
 
 
@@ -12068,66 +12095,7 @@ Quantum object: dims = [[2, 2, 2, 2], [2, 2, 2, 2]], shape = (16, 16), type = op
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[126]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">blue_box</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">ctrl</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">alpha</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[144]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blue_box</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-144-f42d1b83c9fa&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>blue_box<span class="ansi-blue-fg">(</span><span class="ansi-cyan-fg">4</span><span class="ansi-blue-fg">,</span> <span class="ansi-cyan-fg">2</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-126-9415e8b92021&gt;</span> in <span class="ansi-cyan-fg">blue_box</span><span class="ansi-blue-fg">(n, ctrl)</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-green-fg">def</span> blue_box<span class="ansi-blue-fg">(</span>n<span class="ansi-blue-fg">,</span> ctrl<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg">     </span><span class="ansi-green-fg">for</span> i <span class="ansi-green-fg">in</span> <span class="ansi-blue-fg">(</span>set<span class="ansi-blue-fg">(</span>range<span class="ansi-blue-fg">(</span>n<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span> <span class="ansi-blue-fg">-</span> set<span class="ansi-blue-fg">(</span>ctrl<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">      3</span>         print <span class="ansi-blue-fg">(</span>i<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">TypeError</span>: &#39;int&#39; object is not iterable</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[143]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">U</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">ry</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">rz</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -12135,26 +12103,6 @@ Quantum object: dims = [[2, 2, 2, 2], [2, 2, 2, 2]], shape = (16, 16), type = op
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[143]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>True</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 

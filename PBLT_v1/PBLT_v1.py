@@ -24,7 +24,7 @@ num_params = 3 * num_gates
 
 # ### Qutip Implementation
 
-# In[102]:
+# In[3]:
 
 
 # apply given single-qubit gate to any qubit in system of n qubits
@@ -45,14 +45,14 @@ def gate_prod(n, gates):
     return prod
 
 
-# In[136]:
+# In[62]:
 
 
 # arbitrary rotation/controlled rotation gates
 # https://arxiv.org/abs/quant-ph/9503016
 
 # ROT = Rz(alpha) * Ry(theta) * Rz(beta)
-def arb_rot(n, params, tgt):
+def rot(n, params, tgt):
     alpha, theta, beta = params
     return rz(alpha, n, tgt)*ry(theta, n, tgt)*rz(beta, n, tgt)
 
@@ -61,6 +61,7 @@ def arb_rot(n, params, tgt):
 # B = Ry(-theta / 2) * Rz(-(alpha + beta) / 2)
 # C = Rz((beta - alpha) / 2)
 def ctrl_rot(n, params, ctrl, tgt):
+    print(n, params, ctrl, tgt)
     alpha, theta, beta = params
     A = rz(alpha, n, tgt) * ry(theta / 2.0, n, tgt)
     B = ry(-theta / 2.0, n, tgt) * rz(-(alpha + beta) / 2.0, n, tgt)
@@ -72,114 +73,130 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Data Structures
 
-# In[203]:
+# In[64]:
 
-
-params = np.ones(num_params)
-
-# num_params total
-# first 3n : outside blue box
-# last 3n : outside blue box
-# each of n blue box: (n-1) *3 params
-first_params = params[:3*n]
-last_params = params[-3*n:]
-blue_box_params = params[3*n:-3*n]
-blue_box_params = blue_box_params.reshape((n, n-1, 3))
 
 def split_params(n, params):
-    return params[:3*n], params[3*n:-3*n].reshape((n, n-1, 3)), params[-3*n:]
+    return (params[:3*n].reshape(n, 3),
+            params[3*n:-3*n].reshape(n, n-1, 3),
+            params[-3*n:].reshape(n, 3))
 
 def recombine_params(first, mid, last):
     return np.concatenate((first.flatten(), mid.flatten(), last.flatten()))
-
-# check that split works
-split = split_params(n, params)
-split[0] == first_params, split[1] == blue_box_params, split[2] == last_params
 
 
 # #### Circuit
 # The circuit outlined in red below is the unitary gate for encoding (in this case, for 4 qubit inputs).
 # ![arbitrary_rotation_gate_circuit](https://image.ibb.co/ji9XBc/unit_cell_arb_rot.png)
 
-# In[149]:
+# In[14]:
 
 
-# create circuit from parameters
-def get_circuit_gates(num_gates, params):
-    gates = np.array([tenseye(4) for _ in range(num_gates)])
+# # create circuit from parameters
+# def get_circuit_gates(num_gates, params):
+#     gates = np.array([tenseye(4) for _ in range(num_gates)])
 
-    # R1 - R4
-    for gate_num in range(0, 4):
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 0)
+#     # R1 - R4
+#     for gate_num in range(0, 4):
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 0)
 
-    # R5 - R7 controlled by qubit 0
-    for gate_num in range(4, 7):
-        control = 0
-        targets = [1, 2, 3]
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 4])
+#     # R5 - R7 controlled by qubit 0
+#     for gate_num in range(4, 7):
+#         control = 0
+#         targets = [1, 2, 3]
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 4])
 
-    # R8 - R10 controlled by qubit 1
-    for gate_num in range(7, 10):
-        control = 1
-        targets = [0, 2, 3]
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 7])
+#     # R8 - R10 controlled by qubit 1
+#     for gate_num in range(7, 10):
+#         control = 1
+#         targets = [0, 2, 3]
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 7])
 
-    # R11 - R13 controlled by qubit 2
-    for gate_num in range(10, 13):
-        control = 2
-        targets = [0, 1, 3]
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 10])
+#     # R11 - R13 controlled by qubit 2
+#     for gate_num in range(10, 13):
+#         control = 2
+#         targets = [0, 1, 3]
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 10])
 
-    # R14 - R16 controlled by qubit 3
-    for gate_num in range(13, 16):
-        control = 3
-        targets = [0, 1, 2]
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 13])
+#     # R14 - R16 controlled by qubit 3
+#     for gate_num in range(13, 16):
+#         control = 3
+#         targets = [0, 1, 2]
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = ctrl_rot(n, alpha, theta, beta, control, targets[gate_num - 13])
 
-    # R17 - R20
-    for gate_num in range(16, 20):
-        alpha, theta, beta = params[gate_num]
-        gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 16)
+#     # R17 - R20
+#     for gate_num in range(16, 20):
+#         alpha, theta, beta = params[gate_num]
+#         gates[gate_num] = arb_rot(n, alpha, theta, beta, gate_num - 16)
 
-    return gates
-
-
-# In[114]:
+#     return gates
 
 
-gates = get_circuit_gates(num_gates, params)
+# In[16]:
 
 
-# In[115]:
+# gate_product = gate_prod(n, gates)
+# gate_product
 
 
-gate_product = gate_prod(n, gates)
-gate_product
+# In[73]:
 
 
-# In[126]:
+def wrapper(n, params):
+    assert (len(params) == n)
+    gates = []
+    for tgt, rot_params in enumerate(params):
+        gates.append(rot(n, rot_params, tgt))
+    return gate_prod(n, gates)
 
-
-def blue_box(n, ctrl, params):
-    for i in range(n):
-        if i == ctrl:
+def blue_box(n, params, ctrl):
+    p_index = 0
+    gates = []
+    for tgt in range(n):
+        #print (tgt, ctrl)
+        if tgt == ctrl:
             continue
-        alpha, theta, beta = params
-        ctrl_rot(n, params, ctrl, i):
+        rot_params = params[p_index]
+        p_index += 1
+        gates.append(ctrl_rot(n, rot_params, ctrl, tgt))
+    return gate_prod(n, gates)
+
+def create_circuit(n, all_params):
+    gates = []
+    
+    # split parameters
+    f, m, b = split_params(n, all_params)
+    
+    # front wrapper
+    gates.append(wrapper(n, f))
+    
+    # blue boxes
+    for i in range(n):
+        gates.append(blue_box(n, m[i], i))
+    
+    # back wrapper
+    gates.append(wrapper(n, b))
+    
+    return gate_prod(n, gates)
 
 
-# In[144]:
+# In[78]:
 
 
-blue_box(4, 2)
+# testing
+params = np.ones(num_params)
+U = create_circuit(n, params)
+# for ctrl, blue_box_params in enumerate(m_params):
+#     blue_box(n, ctrl, blue_box_params)
+U
 
 
-# In[143]:
+# In[ ]:
 
 
 U = rz(1)*ry(2)*rz(3)
