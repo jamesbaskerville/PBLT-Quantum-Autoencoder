@@ -1,3 +1,4 @@
 Qconfig.py
 *.pyc
 .ipynb_checkpoints/*
+.DS_Store

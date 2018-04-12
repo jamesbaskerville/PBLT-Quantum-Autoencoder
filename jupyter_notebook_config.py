@@ -20,9 +20,12 @@ def post_save(model, os_path, contents_manager):
         #sp.check_call(['mkdir', subdir])
     execute('jupyter nbconvert --to script ' + fname + '.ipynb', directory=d)
     execute('jupyter nbconvert --to html ' + fname + '.ipynb', directory=d)
-    execute('for f in '+fname+'.*; do mv "$f" "'+subdir+'/$f"; done;', directory=d)
-    execute('cp '+subdir.replace(' ', '\ ')+'/'+fname+'.ipynb '+fname+'.ipynb', directory=d)
-    execute('rm -f '+subdir.replace(' ', '\ ')+'/'+fname+'.ipynb', directory=d)
+    execute('for f in '+fname+'.*; do echo cp "$f" "./'+fname+'/$f"; done;', directory=d)
+    execute('for f in '+fname+'.*; do cp "$f" "./'+fname+'/$f"; done;', directory=d)
+    execute('rm -f ./'+fname+'/'+fname+'.ipynb', directory=d)
+    execute('echo rm -f ./'+fname+'/'+fname+'.ipynb', directory=d)
+    execute('rm -f '+fname+'.py '+fname+'.html', directory=d)
+    execute('echo rm -f '+fname+'.py '+fname+'.html', directory=d)
     execute('rm -rf Untitled*/', directory=d)
 
 c.FileContentsManager.post_save_hook = post_save

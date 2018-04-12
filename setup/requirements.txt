@@ -6,5 +6,6 @@ qiskit
 IBMQuantumExperience
 pyquil
 quantum-grove
+ipykernel
 tqdm
 executor
