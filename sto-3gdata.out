@@ -18,9 +18,9 @@
     -----------------------------------------------------------------------
 
 
-    Psi4 started on: Wednesday, 18 April 2018 04:41PM
+    Psi4 started on: Wednesday, 18 April 2018 05:37PM
 
-    Process ID:  64626
+    Process ID:  67840
     PSIDATADIR: /Users/jwbaskerv/miniconda3/share/psi4
     Memory:     500.0 MiB
     Threads:    1
@@ -46,10 +46,10 @@ from _psi4_conversion_functions import *
 memory 8000 mb
 
 # Initialize molecular data.
-_description = '2.0'
+_description = '2.75'
 if _description == 'None':
     _description = None
-molecule = MolecularData([('H', (0.0, 0.0, 0.0)), ('H', (0.0, 0.0, 2.0))],
+molecule = MolecularData([('H', (0.0, 0.0, 0.0)), ('H', (0.0, 0.0, 2.75))],
                          'sto-3g',
                          1,
                          0,
@@ -59,7 +59,7 @@ molecule = MolecularData([('H', (0.0, 0.0, 0.0)), ('H', (0.0, 0.0, 2.0))],
 # Set molecular geometry and symmetry.
 molecule mol {
 H 0.0 0.0 0.0
-H 0.0 0.0 2.0
+H 0.0 0.0 2.75
 symmetry c1
 }
 mol.set_multiplicity(1)
@@ -272,7 +272,7 @@ if 0:
   Memory set to   7.451 GiB by Python driver.
 
 *** tstart() called on Jamess-MacBook-Pro-100.local
-*** at Wed Apr 18 16:41:24 2018
+*** at Wed Apr 18 17:37:31 2018
 
    => Loading Basis Set <=
 
@@ -298,14 +298,14 @@ if 0:
 
        Center              X                  Y                   Z               Mass       
     ------------   -----------------  -----------------  -----------------  -----------------
-           H          0.000000000000     0.000000000000    -1.000000000000     1.007825032070
-           H          0.000000000000     0.000000000000     1.000000000000     1.007825032070
+           H          0.000000000000     0.000000000000    -1.375000000000     1.007825032070
+           H          0.000000000000     0.000000000000     1.375000000000     1.007825032070
 
   Running in c1 symmetry.
 
-  Rotational constants: A = ************  B =      8.36337  C =      8.36337 [cm^-1]
-  Rotational constants: A = ************  B = 250727.55137  C = 250727.55137 [MHz]
-  Nuclear repulsion =    0.264588604295000
+  Rotational constants: A = ************  B =      4.42360  C =      4.42360 [cm^-1]
+  Rotational constants: A = ************  B = 132616.22552  C = 132616.22552 [MHz]
+  Nuclear repulsion =    0.192428075850909
 
   Charge       = 0
   Multiplicity = 1
@@ -370,7 +370,7 @@ if 0:
     Schwarz Cutoff:          1E-12
 
     OpenMP threads:              1
-  Minimum eigenvalue in the overlap matrix is 8.8078347264E-01.
+  Minimum eigenvalue in the overlap matrix is 9.6948097992E-01.
   Using Symmetric Orthogonalization.
 
   SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.
@@ -379,9 +379,9 @@ if 0:
 
                         Total Energy        Delta E     RMS |[F,P]|
 
-   @RHF iter   0:    -0.55021981219237   -5.50220e-01   0.00000e+00 
-   @RHF iter   1:    -0.78379265246631   -2.33573e-01   1.97671e-17 
-   @RHF iter   2:    -0.78379265246631    1.11022e-16   0.00000e+00 DIIS
+   @RHF iter   0:    -0.54611056512857   -5.46111e-01   2.45441e-18 
+   @RHF iter   1:    -0.67617230934050   -1.30062e-01   1.09958e-15 
+   @RHF iter   2:    -0.67617230934050   -4.44089e-16   1.92426e-15 DIIS/DAMP
 
   ==> Post-Iterations <==
 
@@ -390,11 +390,11 @@ if 0:
 
     Doubly Occupied:                                                      
 
-       1A     -0.269459  
+       1A     -0.195412  
 
     Virtual:                                                              
 
-       2A      0.108997  
+       2A      0.031712  
 
     Final Occupation by Irrep:
               A 
@@ -402,18 +402,18 @@ if 0:
 
   Energy converged.
 
-  @RHF Final Energy:    -0.78379265246631
+  @RHF Final Energy:    -0.67617230934050
 
    => Energetics <=
 
-    Nuclear Repulsion Energy =              0.2645886042950000
-    One-Electron Energy =                  -1.5578440686337398
-    Two-Electron Energy =                   0.5094628118724289
+    Nuclear Repulsion Energy =              0.1924280758509091
+    One-Electron Energy =                  -1.3463758633552172
+    Two-Electron Energy =                   0.4777754781638042
     DFT Exchange-Correlation Energy =       0.0000000000000000
     Empirical Dispersion Energy =           0.0000000000000000
     PCM Polarization Energy =               0.0000000000000000
     EFP Energy =                            0.0000000000000000
-    Total Energy =                         -0.7837926524663108
+    Total Energy =                         -0.6761723093405039
 
 
 
@@ -434,7 +434,7 @@ Properties computed using the SCF density matrix
      X:     0.0000      Y:     0.0000      Z:     0.0000     Total:     0.0000
 
 
-*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 16:41:24 2018
+*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 17:37:31 2018
 Module time:
 	user time   =       0.11 seconds =       0.00 minutes
 	system time =       0.01 seconds =       0.00 minutes
@@ -445,7 +445,7 @@ Total time:
 	total time  =          0 seconds =       0.00 minutes
 
 *** tstart() called on Jamess-MacBook-Pro-100.local
-*** at Wed Apr 18 16:41:24 2018
+*** at Wed Apr 18 17:37:31 2018
 
    => Loading Basis Set <=
 
@@ -471,14 +471,14 @@ Total time:
 
        Center              X                  Y                   Z               Mass       
     ------------   -----------------  -----------------  -----------------  -----------------
-           H          0.000000000000     0.000000000000    -1.000000000000     1.007825032070
-           H          0.000000000000     0.000000000000     1.000000000000     1.007825032070
+           H          0.000000000000     0.000000000000    -1.375000000000     1.007825032070
+           H          0.000000000000     0.000000000000     1.375000000000     1.007825032070
 
   Running in c1 symmetry.
 
-  Rotational constants: A = ************  B =      8.36337  C =      8.36337 [cm^-1]
-  Rotational constants: A = ************  B = 250727.55137  C = 250727.55137 [MHz]
-  Nuclear repulsion =    0.264588604295000
+  Rotational constants: A = ************  B =      4.42360  C =      4.42360 [cm^-1]
+  Rotational constants: A = ************  B = 132616.22552  C = 132616.22552 [MHz]
+  Nuclear repulsion =    0.192428075850909
 
   Charge       = 0
   Multiplicity = 1
@@ -543,7 +543,7 @@ Total time:
     Schwarz Cutoff:          1E-12
 
     OpenMP threads:              1
-  Minimum eigenvalue in the overlap matrix is 8.8078347264E-01.
+  Minimum eigenvalue in the overlap matrix is 9.6948097992E-01.
   Using Symmetric Orthogonalization.
 
   SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.
@@ -552,9 +552,9 @@ Total time:
 
                         Total Energy        Delta E     RMS |[F,P]|
 
-   @RHF iter   0:    -0.55021981219237   -5.50220e-01   0.00000e+00 
-   @RHF iter   1:    -0.78379265246631   -2.33573e-01   1.97671e-17 
-   @RHF iter   2:    -0.78379265246631    1.11022e-16   0.00000e+00 DIIS
+   @RHF iter   0:    -0.54611056512857   -5.46111e-01   2.45441e-18 
+   @RHF iter   1:    -0.67617230934050   -1.30062e-01   1.09958e-15 
+   @RHF iter   2:    -0.67617230934050   -4.44089e-16   1.92426e-15 DIIS/DAMP
 
   ==> Post-Iterations <==
 
@@ -563,11 +563,11 @@ Total time:
 
     Doubly Occupied:                                                      
 
-       1A     -0.269459  
+       1A     -0.195412  
 
     Virtual:                                                              
 
-       2A      0.108997  
+       2A      0.031712  
 
     Final Occupation by Irrep:
               A 
@@ -575,18 +575,18 @@ Total time:
 
   Energy converged.
 
-  @RHF Final Energy:    -0.78379265246631
+  @RHF Final Energy:    -0.67617230934050
 
    => Energetics <=
 
-    Nuclear Repulsion Energy =              0.2645886042950000
-    One-Electron Energy =                  -1.5578440686337398
-    Two-Electron Energy =                   0.5094628118724289
+    Nuclear Repulsion Energy =              0.1924280758509091
+    One-Electron Energy =                  -1.3463758633552172
+    Two-Electron Energy =                   0.4777754781638042
     DFT Exchange-Correlation Energy =       0.0000000000000000
     Empirical Dispersion Energy =           0.0000000000000000
     PCM Polarization Energy =               0.0000000000000000
     EFP Energy =                            0.0000000000000000
-    Total Energy =                         -0.7837926524663108
+    Total Energy =                         -0.6761723093405039
 
 
 
@@ -607,18 +607,18 @@ Properties computed using the SCF density matrix
      X:     0.0000      Y:     0.0000      Z:     0.0000     Total:     0.0000
 
 
-*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 16:41:24 2018
+*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 17:37:31 2018
 Module time:
 	user time   =       0.10 seconds =       0.00 minutes
 	system time =       0.01 seconds =       0.00 minutes
 	total time  =          0 seconds =       0.00 minutes
 Total time:
-	user time   =       0.24 seconds =       0.00 minutes
+	user time   =       0.25 seconds =       0.00 minutes
 	system time =       0.03 seconds =       0.00 minutes
 	total time  =          0 seconds =       0.00 minutes
 
 *** tstart() called on Jamess-MacBook-Pro-100.local
-*** at Wed Apr 18 16:41:24 2018
+*** at Wed Apr 18 17:37:31 2018
 
 
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>//
@@ -661,36 +661,36 @@ Total time:
 	-----------------------------------------------------------
 	 ==================> DF-MP2 Energies <==================== 
 	-----------------------------------------------------------
-	 Reference Energy          =      -0.7837926524663108 [Eh]
+	 Reference Energy          =      -0.6761723093405039 [Eh]
 	 Singles Energy            =      -0.0000000000000000 [Eh]
 	 Same-Spin Energy          =       0.0000000000000000 [Eh]
-	 Opposite-Spin Energy      =      -0.0887174080147618 [Eh]
-	 Correlation Energy        =      -0.0887174080147618 [Eh]
-	 Total Energy              =      -0.8725100604810726 [Eh]
+	 Opposite-Spin Energy      =      -0.1868990096272642 [Eh]
+	 Correlation Energy        =      -0.1868990096272642 [Eh]
+	 Total Energy              =      -0.8630713189677680 [Eh]
 	-----------------------------------------------------------
 	 ================> DF-SCS-MP2 Energies <================== 
 	-----------------------------------------------------------
 	 SCS Same-Spin Scale       =       0.3333333333333333 [-]
 	 SCS Opposite-Spin Scale   =       1.2000000000000000 [-]
 	 SCS Same-Spin Energy      =       0.0000000000000000 [Eh]
-	 SCS Opposite-Spin Energy  =      -0.1064608896177142 [Eh]
-	 SCS Correlation Energy    =      -0.1064608896177142 [Eh]
-	 SCS Total Energy          =      -0.8902535420840250 [Eh]
+	 SCS Opposite-Spin Energy  =      -0.2242788115527170 [Eh]
+	 SCS Correlation Energy    =      -0.2242788115527170 [Eh]
+	 SCS Total Energy          =      -0.9004511208932209 [Eh]
 	-----------------------------------------------------------
 
 
-*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 16:41:24 2018
+*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 17:37:31 2018
 Module time:
-	user time   =       0.06 seconds =       0.00 minutes
+	user time   =       0.05 seconds =       0.00 minutes
 	system time =       0.00 seconds =       0.00 minutes
 	total time  =          0 seconds =       0.00 minutes
 Total time:
-	user time   =       0.30 seconds =       0.00 minutes
+	user time   =       0.30 seconds =       0.01 minutes
 	system time =       0.03 seconds =       0.00 minutes
 	total time  =          0 seconds =       0.00 minutes
 
 *** tstart() called on Jamess-MacBook-Pro-100.local
-*** at Wed Apr 18 16:41:24 2018
+*** at Wed Apr 18 17:37:31 2018
 
    => Loading Basis Set <=
 
@@ -716,14 +716,14 @@ Total time:
 
        Center              X                  Y                   Z               Mass       
     ------------   -----------------  -----------------  -----------------  -----------------
-           H          0.000000000000     0.000000000000    -1.000000000000     1.007825032070
-           H          0.000000000000     0.000000000000     1.000000000000     1.007825032070
+           H          0.000000000000     0.000000000000    -1.375000000000     1.007825032070
+           H          0.000000000000     0.000000000000     1.375000000000     1.007825032070
 
   Running in c1 symmetry.
 
-  Rotational constants: A = ************  B =      8.36337  C =      8.36337 [cm^-1]
-  Rotational constants: A = ************  B = 250727.55137  C = 250727.55137 [MHz]
-  Nuclear repulsion =    0.264588604295000
+  Rotational constants: A = ************  B =      4.42360  C =      4.42360 [cm^-1]
+  Rotational constants: A = ************  B = 132616.22552  C = 132616.22552 [MHz]
+  Nuclear repulsion =    0.192428075850909
 
   Charge       = 0
   Multiplicity = 1
@@ -788,7 +788,7 @@ Total time:
     Schwarz Cutoff:          1E-12
 
     OpenMP threads:              1
-  Minimum eigenvalue in the overlap matrix is 8.8078347264E-01.
+  Minimum eigenvalue in the overlap matrix is 9.6948097992E-01.
   Using Symmetric Orthogonalization.
 
   SCF Guess: Superposition of Atomic Densities via on-the-fly atomic UHF.
@@ -797,9 +797,9 @@ Total time:
 
                         Total Energy        Delta E     RMS |[F,P]|
 
-   @RHF iter   0:    -0.55021981219237   -5.50220e-01   0.00000e+00 
-   @RHF iter   1:    -0.78379265246631   -2.33573e-01   1.97671e-17 
-   @RHF iter   2:    -0.78379265246631    1.11022e-16   0.00000e+00 DIIS
+   @RHF iter   0:    -0.54611056512857   -5.46111e-01   2.45441e-18 
+   @RHF iter   1:    -0.67617230934050   -1.30062e-01   1.09958e-15 
+   @RHF iter   2:    -0.67617230934050   -4.44089e-16   1.92426e-15 DIIS/DAMP
 
   ==> Post-Iterations <==
 
@@ -808,11 +808,11 @@ Total time:
 
     Doubly Occupied:                                                      
 
-       1A     -0.269459  
+       1A     -0.195412  
 
     Virtual:                                                              
 
-       2A      0.108997  
+       2A      0.031712  
 
     Final Occupation by Irrep:
               A 
@@ -820,18 +820,18 @@ Total time:
 
   Energy converged.
 
-  @RHF Final Energy:    -0.78379265246631
+  @RHF Final Energy:    -0.67617230934050
 
    => Energetics <=
 
-    Nuclear Repulsion Energy =              0.2645886042950000
-    One-Electron Energy =                  -1.5578440686337398
-    Two-Electron Energy =                   0.5094628118724289
+    Nuclear Repulsion Energy =              0.1924280758509091
+    One-Electron Energy =                  -1.3463758633552172
+    Two-Electron Energy =                   0.4777754781638042
     DFT Exchange-Correlation Energy =       0.0000000000000000
     Empirical Dispersion Energy =           0.0000000000000000
     PCM Polarization Energy =               0.0000000000000000
     EFP Energy =                            0.0000000000000000
-    Total Energy =                         -0.7837926524663108
+    Total Energy =                         -0.6761723093405039
 
 
 
@@ -852,15 +852,15 @@ Properties computed using the SCF density matrix
      X:     0.0000      Y:     0.0000      Z:     0.0000     Total:     0.0000
 
 
-*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 16:41:25 2018
+*** tstop() called on Jamess-MacBook-Pro-100.local at Wed Apr 18 17:37:31 2018
 Module time:
 	user time   =       0.10 seconds =       0.00 minutes
-	system time =       0.01 seconds =       0.00 minutes
-	total time  =          1 seconds =       0.02 minutes
+	system time =       0.02 seconds =       0.00 minutes
+	total time  =          0 seconds =       0.00 minutes
 Total time:
-	user time   =       0.42 seconds =       0.01 minutes
+	user time   =       0.43 seconds =       0.01 minutes
 	system time =       0.05 seconds =       0.00 minutes
-	total time  =          1 seconds =       0.02 minutes
+	total time  =          0 seconds =       0.00 minutes
  MINTS: Wrapper to libmints.
    by Justin Turney
 
@@ -951,30 +951,30 @@ Total time:
 
    ==> Starting CI iterations <==
 
-    H0 Block Eigenvalue =  -0.94864111
+    H0 Block Eigenvalue =  -0.93434899
 
     Simultaneous Expansion Method (Block Davidson Method)
     Using 1 initial trial vectors
 
      Iter   Root       Total Energy       Delta E      C RMS
 
-   @CI  0:     0     -0.948641111742   -1.2132E+00   3.2781E-15  
+   @CI  0:     0     -0.934348987695   -1.1268E+00   3.3036E-14  
     Warning: Norm of correction (root 0) is < 1.0E-13
-   @CI  1:     0     -0.948641111742   0.0000E+00   8.3654E-16 c
+   @CI  1:     0     -0.934348987695   0.0000E+00   1.3960E-16 c
 
    ==> Energetics <==
 
-    SCF energy =           -0.783792652466311
-    Total CI energy =      -0.948641111742408
+    SCF energy =           -0.676172309340504
+    Total CI energy =      -0.934348987695089
 
    ==> FCI root 0 information <==
 
-    FCI Root 0 energy =    -0.948641111742408
+    FCI Root 0 energy =    -0.934348987695089
 
    The 4 most important determinants:
 
-    *   1    0.843747  (    0,    0)  1AX 
-    *   2   -0.536741  (    1,    1)  2AX 
+    *   1   -0.748460  (    0,    0)  1AX 
+    *   2    0.663180  (    1,    1)  2AX 
 
 		 "A good bug is a dead bug" 
 
