@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[32]:
+# In[7]:
 
 
 import numpy as np
@@ -15,7 +15,9 @@ from scipy.optimize import minimize
 # 
 # https://arxiv.org/abs/1612.02806
 
-# ### Qutip Implementation
+# ### QuTip Implementation
+
+# #### QuTip Helper Functions
 
 # In[2]:
 
@@ -38,10 +40,11 @@ def gate_prod(n, gates):
     return prod
 
 
-# In[16]:
+# #### Arbitrary Rotation Gates (single-qubit and controlled)
+
+# In[3]:
 
 
-# arbitrary rotation/controlled rotation gates
 # https://arxiv.org/abs/quant-ph/9503016
 
 # ROT = Rz(alpha) * Ry(theta) * Rz(beta)
@@ -63,9 +66,9 @@ def ctrl_rot(n, params, ctrl, tgt):
     return A * cnot(n, ctrl, tgt) * B * cnot(n, ctrl, tgt) * C
 
 
-# #### Data Structures
+# #### Parameter Manipulation
 
-# In[37]:
+# In[4]:
 
 
 def init_params(n_params, method=np.ones):
@@ -139,9 +142,12 @@ def recombine_params(first, mid, last):
 # gate_product
 
 
-# In[7]:
+# #### Circuit Implementation
+
+# In[3]:
 
 
+# The n rotation gates (one on each qubit) that happen at the start and end.
 def wrapper(n, params):
     assert (len(params) == n)
     gates = []
@@ -149,6 +155,7 @@ def wrapper(n, params):
         gates.append(rot(n, rot_params, tgt))
     return gate_prod(n, gates)
 
+# The n-1 gates in each "blue box" (set of controlled rotation gates)
 def blue_box(n, params, ctrl):
     p_index = 0
     gates = []
@@ -161,6 +168,7 @@ def blue_box(n, params, ctrl):
         gates.append(ctrl_rot(n, rot_params, ctrl, tgt))
     return gate_prod(n, gates)
 
+# The circuit as a whole -- front wrapper, blue boxes, back wrapper
 def create_circuit(n, all_params):
     gates = []
     
@@ -271,14 +279,277 @@ outstates = U*instates
 sum(1-v_overlap(instates, outstates))
 
 
-# In[114]:
+# ## Density Matrix Overview:
+# 
+# In order to understand how the cost function is computed for the autoencoder, we will need to describe our system in terms of density matricies. Density matrices are useful because they describe ensemble behavior of quantum experiments - which are often the result of imperfect quantum manipulations.
+# 
+# To this point in ES170 we have dealt only with pure states - where the quantum state of the system inputs and outputs can be described by a single state vector.
+# 
+# In practice we can have states which are a probablilistic ensemble of pure states. Note that this is fundamentally different from a superposition. We will explore describe this distinction explicitly below. Density matrices are a useful tool for describing this more general class of ensemble states.
+# 
+# The following examples will illustrate the mechanics of density matrices.
+# 
+# For a pure state, $|\psi>$ the density matrix (sometimes called the density operator) is given by the following:
+# 
+# $\rho = |\psi><\psi|$
+# 
+# For a single bit system, expressed in the $\{|0>,|1>\}$ basis, the density matrix elements are thus:
+# 
+# $\rho_{11} = <0|\rho|0>$
+# 
+# $\rho_{12} = <0|\rho|1>$
+# 
+# $\rho_{21} = <1|\rho|0>$
+# 
+# $\rho_{12} = <1|\rho|1>$
+# 
+# With some simple dirac manipulation, we can see that the entries of the density matrix are probabilities. For example, $\rho_{11}$ is the probability of measuring $|\psi>$ in state zero.
+# 
+# As an example, we construct the density matrix for basis states:
+
+# In[18]:
 
 
-qubit()
+# Basis state 0 
+q0 = basis(2,0)
+
+rho = q0*q0.dag()
+
+rho
 
 
-# In[115]:
+# In[19]:
 
 
-overlap()
+# note the following function also works
+ket2dm(q0)
 
+
+# In[20]:
+
+
+# For basis state 1
+q1 = basis(2,1)
+
+ket2dm(q1)
+
+
+# These pure, orthogonal basis states are equivalent to fock (photon number) states, and qutip has a built in function:
+
+# In[21]:
+
+
+fock_dm(2,1)
+
+
+# Nice! We can simply read the probability of the system being in state zero or one by looking at the diagonal entries. What happens for a superpostion?
+
+# In[31]:
+
+
+# equal superposition state
+q = 1/np.sqrt(2)*(basis(2,0)+basis(2,1))
+
+ket2dm(q)
+
+
+# For a superposition we have off diagonal terms! These off-diagonal terms have important physical meaning (in some cases can be interpreted as coherence). For now we'll ignore that.
+# 
+# The most important property is that for a pure state, the trace (sum of diagonals) of the density matrix is 1. This is related exactly to the normalized nature of a pure state.
+
+# In[28]:
+
+
+ket2dm(q).tr()
+
+
+# Now let's consider a statistical ensemble of pure states. For example, imagine we prepare a _set_ of qubits, half in state zero and half in state one. We could measure these qubits in sequence and build up a statistical interpretation of the initial state. 
+# 
+# This statistical outcome can be expressed as an ensemble state:
+# 
+# $|\Psi> = \frac{1}{2}|0> + \frac{1}{2}|1>$
+# 
+# For which the density matrix is defined:
+# 
+# $\rho = \sum\limits_{i}{p_i|\psi_i><\psi_i|}$
+
+# In[29]:
+
+
+q = 1/2*basis(2,0) + 1/2*basis(2,1)
+
+ket2dm(q)
+
+
+# ### Probabilities of Pure and Mixed States:
+# How can we tell this is not a pure state? By looking at the trace of the density matrix. 
+# 
+# $\text{Tr}[\rho] < 1 \implies \text{Mixed State}$
+# 
+# 
+# The trace in this case is less than 1, indicating a statistical mixture. Actually, in this case we have what is a maximally mixed state:
+# 
+# $\text{Tr}[\rho_{max}] = 1/D$ where $D$ is the dimensionality of the system. In the case of qubits D = 2.
+
+# In[30]:
+
+
+ket2dm(q).tr()
+
+
+# ### Transformation of Density Matrices:
+# 
+# Note that density matrices undergo unitary transformation as follows:
+# 
+# $\rho = |\psi><\psi|$
+# 
+# $\rho' = |\psi'><\psi'|$
+# 
+# $|\psi'> = U|\psi>$ and $ <\psi'| =  <\psi|U^{\dagger}$
+# 
+# $ \implies \rho' = U|\psi><\psi|U^{\dagger}$
+# 
+# $ \implies \rho' = U\rho U^{\dagger}$
+
+# ## The Cost Fuction:
+# 
+# Consider an input ensemble state $\{p_i,|\psi_i\rangle\}$, where $p_i$ are ensemble probabilities of each pure state, $|\psi_i\rangle$. Note that ${|\psi_i\rangle}$ are  not necessarily orthonormal. The density matrix is given by the following:
+# 
+# $\rho = \sum\limits_{i}{p_i|\psi_i\rangle\langle\psi_i|}$
+# 
+# e.g. if our state turns out to be pure for a pure state (e.g. $|\psi_0\rangle$), the ensemble set reduces to $\{1,|\psi_0\rangle\}$.
+# 
+# The autoencoder cost function is given by:
+# 
+# $C_2(q) = \sum\limits_{i}{p_i \times F(Tr_{A}[U^{q}|\psi_i\rangle\langle\psi_i|_{AB}(U^{q})^{\dagger}],|a\rangle_{B})}$
+# 
+# $C_2(q) = {F(Tr_{A}[U^{q}\rho_{AB}(U^{q})^{\dagger}],\rho_{out,B})}$
+# 
+# where $q$ is the set of parameters used to form the arbitrary transformation matrix $U^q$, and $\rho_{out,B}$ our trash state. Performing the partial trace over A, reduces the n+k dimensional density matrix to a k dimensional density matrix corresponding only to the trash state subspace.
+# 
+# Here is a translation of the math into code: 
+# * Input state can be, in general, an ensemble state decomposed as $\{p_i,|\psi_i\rangle\}$
+# * Represent this set of states as a density matrix
+# * Apply the autoencoder transform U to the state, with parameters q
+# * Take a partial trace over the trash subset of the transformed density matrix to recover the trash state density matrix
+# * Using a fidelity function, compare the trash state density matrix to the ancillary state density matrix (in our case zeros)
+# 
+# We can take the output of the cost function and feedback into the minimizer to find the encoding transformation.
+
+# Qutip Partial Trace: http://qutip.org/docs/3.1.0/guide/guide-tensor.html
+# * example of partial trace function
+# * ket to density matrix function
+# 
+# Qutip Fidelity Function: http://qutip.org/docs/3.1.0/apidoc/functions.html
+# * Search fidelity - computes the fidelity of two density matrices
+
+# In[47]:
+
+
+# Cost Function Testing:
+p = [0.5,0.5]
+pure = [1,1]
+psi = [basis(2,0),basis(2,1)]
+psi_pure = 1/np.sqrt(2)*(basis(2,0)+basis(2,1))
+psi_mixed = 1/2*(basis(2,0)+basis(2,1))
+
+C1 = np.sum(fidelity(ket2dm(psi_pure),ket2dm(psi_pure)))
+print(C1)
+
+C1 = [p[i]*fidelity(ket2dm(psi[i]),ket2dm(psi_mixed)) for i in range(len(psi))]
+print(C1)
+
+print(1/2*ket2dm(psi[0])+1/2*ket2dm(psi[1]))
+
+print(ket2dm(1/2*psi[0]+1/2*psi[1]))
+
+
+# In[ ]:
+
+
+# Cost function implementation from the paper:
+n = 5
+k = 2
+
+trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
+
+# This version is broken down in terms of basis vectors and ensemble probabilities:
+#C2 = np.sum([p_set[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)),trashdm) for i in range(len(psi_set))])
+
+# This version composes the input density matrix from the ensemble set of input states, then performs the transform:
+inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))]
+C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
+
+
+# ## Hydrogen Wavefunction Training Set:
+# 
+# In the infamous article, the authors test the autoencoder with a set of ground state wavefunctions of molecular hydrogen. The autoencoder is trained with a subset of 6 ground state wavefunctions at different radial H-H distances, and then the encoder is tested on states at other radii. The Hamiltonian for molecular hydrogen can be solved numerically (classically), which would give us a benchmark for the performance of the autoencoder. We are considering to also implement this set of test states - though it is proving to be challenging!
+# 
+# The Hamiltonian for molecular hydrogen, under the Born-Oppenheimer non-relativistic approximation is given by:
+# 
+# $H = h_{nuc} +\sum\limits_{pq}h_{pq}a_p^{\dagger}a_q^{\dagger} + \frac{1}{2}\sum\limits_{pqrs}h_{pqrs}a_p^{\dagger}a_q^{\dagger}a_r a_s$
+# 
+# There are a few terms here: a nuclear term $h_{nuc}$, a single electron term, and a two electron term, with corresponding electron integrals $h_{pq}$ and $h_{pqrs}$. These terms express the probabilities of electrons occupying different molecular orbitals (e.g. $a_p^{\dagger}$ creates an electron in spin-orbital $p$).
+# 
+# As in the case of qubits, we are free to choose the basis of this Hamiltonian to be whatever we like. In quantum chemistry, we choose a basis which corresponds to a specific set of orthogonal electron orbitals. Often, this basis is selected with the convenience of calculation in mind. For example, the STO-6G hydrogen minimal basis set is one such basis set which is optimized for numerical approximation (the details of which we will perhaps need to explore later).
+# 
+# Furthermore, in order to map this Hamiltonian to a quantum computer, we need to decompose it as a set of pauli rotation operations on single qubits. This is done by either the Bravi-Kitaev (BK) or Jordan-Wigner (JW) transformations. The result of the JW transformed Hamiltonian in the STO-6G basis is as follows:
+# 
+# $H = c_0 I
+# + c_1 (Z_0 + Z_1) 
+# + c_2 (Z_2 + Z_3)
+# + c_3 (Z_0 Z_1)
+# + c_4 (Z_0 Z_2 + Z_1 Z_3)
+# + c_5 (Z_1 Z_2 + Z_0 Z_3)
+# + c_6 (Z_2 Z_3)
+# + c_7 (Y_0 X_1 X_2 Y_3 - X_0 X_1 Y_2 Y_3 - Y_0 Y_1 X_2 X_3 + X_0 Y_1 Y_2 X_3)$
+# 
+# Where $X_n, Y_n, Z_n$ are a pauli matrices acting on the $n$th qubit, and $c_n$ are coefficients which depend on the radial H-H distance.
+# 
+# The Hamiltonian is implemented in qutip below: 
+
+# In[72]:
+
+
+# Reproducing the test set based on the STO-6G minimum basis set of hydrogen
+# From paper:
+
+def makepaulin(N,P):
+    PN = []
+    for n in range(N):
+        tmp = [qeye(2) for _ in range(N)]
+        tmp[n] = P
+        Pn = tensor(tmp)
+        PN.append(Pn)
+    return PN
+
+N=4
+X = makepaulin(N,sigmax())
+Y = makepaulin(N,sigmay())
+Z = makepaulin(N,sigmaz())
+IN = tensor([qeye(2) for _ in range(N)])
+
+# setting all coefficients to 1
+[c0,c1,c2,c3,c4,c5,c6,c7] = [1,1,1,1,1,1,1,1]
+    
+H = (c0*IN + 
+c1*(Z[0]+Z[1]) + 
+c2*(Z[2]+Z[3]) + 
+c3*Z[0]*Z[1] + 
+c4*(Z[0]*Z[2] + Z[1]*Z[3]) + 
+c5*(Z[1]*Z[2]+Z[0]*Z[3]) + 
+c6*(Z[2]*Z[3]) + 
+c7*(Y[0]*X[1]*X[2]*Y[3] - X[0]*X[1]*Y[2]*Y[3] - Y[0]*Y[1]*X[2]*X[3] + X[0]*Y[1]*Y[2]*X[3]))
+
+print(H)
+
+
+# In order to advance from here, we need to compute the coefficients of this Hamiltonian (which depend on radial distance between H atoms), and solve the Schroedinger equation to find ground state energies (in Hartrees) at different distances to form the set of training states. 
+# 
+# I think this requires an optimized solver of Schroedinger's equation, which is beyond probably beyond the scope of this project to implement. We could also use a variational quantum eigensolver, but that requires it's own detailed investigation as well.
+# 
+# One potential workaround could be to use PyQuante - a python library which is built to perform these kinds of caluculations (STO-6G hydrogen minimal basis set approximation). It's a dated python module, and thus far I've had version control issues getting it to integrate here.
+# 
+# I have requested a chemsitry textbook from the library which might lay out the calculation in more detail for us.
+# 
+# Until then we might need to think of a simpler test set or reach out to Zapata.

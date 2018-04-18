@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -11800,7 +11800,15 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Qutip-Implementation">Qutip Implementation<a class="anchor-link" href="#Qutip-Implementation">&#182;</a></h3>
+<h3 id="QuTip-Implementation">QuTip Implementation<a class="anchor-link" href="#QuTip-Implementation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="QuTip-Helper-Functions">QuTip Helper Functions<a class="anchor-link" href="#QuTip-Helper-Functions">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -11832,13 +11840,20 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Arbitrary-Rotation-Gates-(single-qubit-and-controlled)">Arbitrary Rotation Gates (single-qubit and controlled)<a class="anchor-link" href="#Arbitrary-Rotation-Gates-(single-qubit-and-controlled)">&#182;</a></h4>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># arbitrary rotation/controlled rotation gates</span>
-<span class="c1"># https://arxiv.org/abs/quant-ph/9503016</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># https://arxiv.org/abs/quant-ph/9503016</span>
 
 <span class="c1"># ROT = Rz(alpha) * Ry(theta) * Rz(beta)</span>
 <span class="k">def</span> <span class="nf">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">):</span>
@@ -11868,13 +11883,13 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Data-Structures">Data Structures<a class="anchor-link" href="#Data-Structures">&#182;</a></h4>
+<h4 id="Parameter-Manipulation">Parameter Manipulation<a class="anchor-link" href="#Parameter-Manipulation">&#182;</a></h4>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">init_params</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">):</span>
@@ -11973,18 +11988,28 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Circuit-Implementation">Circuit Implementation<a class="anchor-link" href="#Circuit-Implementation">&#182;</a></h4>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The n rotation gates (one on each qubit) that happen at the start and end.</span>
+<span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span>
     <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">rot_params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rot_params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
 
+<span class="c1"># The n-1 gates in each &quot;blue box&quot; (set of controlled rotation gates)</span>
 <span class="k">def</span> <span class="nf">blue_box</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">):</span>
     <span class="n">p_index</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -11997,6 +12022,7 @@ div#notebook {
         <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctrl_rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rot_params</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
 
+<span class="c1"># The circuit as a whole -- front wrapper, blue boxes, back wrapper</span>
 <span class="k">def</span> <span class="nf">create_circuit</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">all_params</span><span class="p">):</span>
     <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
     
@@ -12228,12 +12254,434 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Density-Matrix-Overview:">Density Matrix Overview:<a class="anchor-link" href="#Density-Matrix-Overview:">&#182;</a></h2><p>In order to understand how the cost function is computed for the autoencoder, we will need to describe our system in terms of density matricies. Density matrices are useful because they describe ensemble behavior of quantum experiments - which are often the result of imperfect quantum manipulations.</p>
+<p>To this point in ES170 we have dealt only with pure states - where the quantum state of the system inputs and outputs can be described by a single state vector.</p>
+<p>In practice we can have states which are a probablilistic ensemble of pure states. Note that this is fundamentally different from a superposition. We will explore describe this distinction explicitly below. Density matrices are a useful tool for describing this more general class of ensemble states.</p>
+<p>The following examples will illustrate the mechanics of density matrices.</p>
+<p>For a pure state, $|\psi&gt;$ the density matrix (sometimes called the density operator) is given by the following:</p>
+<p>$\rho = |\psi&gt;&lt;\psi|$</p>
+<p>For a single bit system, expressed in the $\{|0&gt;,|1&gt;\}$ basis, the density matrix elements are thus:</p>
+<p>$\rho_{11} = &lt;0|\rho|0&gt;$</p>
+<p>$\rho_{12} = &lt;0|\rho|1&gt;$</p>
+<p>$\rho_{21} = &lt;1|\rho|0&gt;$</p>
+<p>$\rho_{12} = &lt;1|\rho|1&gt;$</p>
+<p>With some simple dirac manipulation, we can see that the entries of the density matrix are probabilities. For example, $\rho_{11}$ is the probability of measuring $|\psi&gt;$ in state zero.</p>
+<p>As an example, we construct the density matrix for basis states:</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">qubit</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Basis state 0 </span>
+<span class="n">q0</span> <span class="o">=</span> <span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">rho</span> <span class="o">=</span> <span class="n">q0</span><span class="o">*</span><span class="n">q0</span><span class="o">.</span><span class="n">dag</span><span class="p">()</span>
+
+<span class="n">rho</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}1.0 & 0.0\\0.0 & 0.0\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># note the following function also works</span>
+<span class="n">ket2dm</span><span class="p">(</span><span class="n">q0</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}1.0 & 0.0\\0.0 & 0.0\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For basis state 1</span>
+<span class="n">q1</span> <span class="o">=</span> <span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ket2dm</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}0.0 & 0.0\\0.0 & 1.0\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These pure, orthogonal basis states are equivalent to fock (photon number) states, and qutip has a built in function:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fock_dm</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}0.0 & 0.0\\0.0 & 1.0\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nice! We can simply read the probability of the system being in state zero or one by looking at the diagonal entries. What happens for a superpostion?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># equal superposition state</span>
+<span class="n">q</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">ket2dm</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[31]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}0.500 & 0.500\\0.500 & 0.500\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For a superposition we have off diagonal terms! These off-diagonal terms have important physical meaning (in some cases can be interpreted as coherence). For now we'll ignore that.</p>
+<p>The most important property is that for a pure state, the trace (sum of diagonals) of the density matrix is 1. This is related exactly to the normalized nature of a pure state.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ket2dm</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">tr</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.9999999999999998</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let's consider a statistical ensemble of pure states. For example, imagine we prepare a <em>set</em> of qubits, half in state zero and half in state one. We could measure these qubits in sequence and build up a statistical interpretation of the initial state.</p>
+<p>This statistical outcome can be expressed as an ensemble state:</p>
+<p>$|\Psi&gt; = \frac{1}{2}|0&gt; + \frac{1}{2}|1&gt;$</p>
+<p>For which the density matrix is defined:</p>
+<p>$\rho = \sum\limits_{i}{p_i|\psi_i&gt;&lt;\psi_i|}$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ket2dm</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[29]:</div>
+
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True\begin{equation*}\left(\begin{array}{*{11}c}0.250 & 0.250\\0.250 & 0.250\\\end{array}\right)\end{equation*}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Probabilities-of-Pure-and-Mixed-States:">Probabilities of Pure and Mixed States:<a class="anchor-link" href="#Probabilities-of-Pure-and-Mixed-States:">&#182;</a></h3><p>How can we tell this is not a pure state? By looking at the trace of the density matrix.</p>
+<p>$\text{Tr}[\rho] &lt; 1 \implies \text{Mixed State}$</p>
+<p>The trace in this case is less than 1, indicating a statistical mixture. Actually, in this case we have what is a maximally mixed state:</p>
+<p>$\text{Tr}[\rho_{max}] = 1/D$ where $D$ is the dimensionality of the system. In the case of qubits D = 2.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ket2dm</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">tr</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[30]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.5</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Transformation-of-Density-Matrices:">Transformation of Density Matrices:<a class="anchor-link" href="#Transformation-of-Density-Matrices:">&#182;</a></h3><p>Note that density matrices undergo unitary transformation as follows:</p>
+<p>$\rho = |\psi&gt;&lt;\psi|$</p>
+<p>$\rho' = |\psi'&gt;&lt;\psi'|$</p>
+<p>$|\psi'&gt; = U|\psi&gt;$ and $ &lt;\psi'| =  &lt;\psi|U^{\dagger}$</p>
+<p>$ \implies \rho' = U|\psi&gt;&lt;\psi|U^{\dagger}$</p>
+<p>$ \implies \rho' = U\rho U^{\dagger}$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-Cost-Fuction:">The Cost Fuction:<a class="anchor-link" href="#The-Cost-Fuction:">&#182;</a></h2><p>Consider an input ensemble state $\{p_i,|\psi_i\rangle\}$, where $p_i$ are ensemble probabilities of each pure state, $|\psi_i\rangle$. Note that ${|\psi_i\rangle}$ are  not necessarily orthonormal. The density matrix is given by the following:</p>
+<p>$\rho = \sum\limits_{i}{p_i|\psi_i\rangle\langle\psi_i|}$</p>
+<p>e.g. if our state turns out to be pure for a pure state (e.g. $|\psi_0\rangle$), the ensemble set reduces to $\{1,|\psi_0\rangle\}$.</p>
+<p>The autoencoder cost function is given by:</p>
+<p>$C_2(q) = \sum\limits_{i}{p_i \times F(Tr_{A}[U^{q}|\psi_i\rangle\langle\psi_i|_{AB}(U^{q})^{\dagger}],|a\rangle_{B})}$</p>
+<p>$C_2(q) = {F(Tr_{A}[U^{q}\rho_{AB}(U^{q})^{\dagger}],\rho_{out,B})}$</p>
+<p>where $q$ is the set of parameters used to form the arbitrary transformation matrix $U^q$, and $\rho_{out,B}$ our trash state. Performing the partial trace over A, reduces the n+k dimensional density matrix to a k dimensional density matrix corresponding only to the trash state subspace.</p>
+<p>Here is a translation of the math into code:</p>
+<ul>
+<li>Input state can be, in general, an ensemble state decomposed as $\{p_i,|\psi_i\rangle\}$</li>
+<li>Represent this set of states as a density matrix</li>
+<li>Apply the autoencoder transform U to the state, with parameters q</li>
+<li>Take a partial trace over the trash subset of the transformed density matrix to recover the trash state density matrix</li>
+<li>Using a fidelity function, compare the trash state density matrix to the ancillary state density matrix (in our case zeros)</li>
+</ul>
+<p>We can take the output of the cost function and feedback into the minimizer to find the encoding transformation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Qutip Partial Trace: <a href="http://qutip.org/docs/3.1.0/guide/guide-tensor.html">http://qutip.org/docs/3.1.0/guide/guide-tensor.html</a></p>
+<ul>
+<li>example of partial trace function</li>
+<li>ket to density matrix function</li>
+</ul>
+<p>Qutip Fidelity Function: <a href="http://qutip.org/docs/3.1.0/apidoc/functions.html">http://qutip.org/docs/3.1.0/apidoc/functions.html</a></p>
+<ul>
+<li>Search fidelity - computes the fidelity of two density matrices</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Cost Function Testing:</span>
+<span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]</span>
+<span class="n">pure</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="p">[</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">psi_pure</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">psi_mixed</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">C1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fidelity</span><span class="p">(</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi_pure</span><span class="p">),</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi_pure</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">C1</span><span class="p">)</span>
+
+<span class="n">C1</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">fidelity</span><span class="p">(</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi_mixed</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psi</span><span class="p">))]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">C1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">ket2dm</span><span class="p">(</span><span class="n">psi</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ket2dm</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">psi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">psi</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 </pre></div>
 
 </div>
@@ -12249,14 +12697,18 @@ div#notebook {
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-114-6bf5ffb9121e&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>qubit<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">NameError</span>: name &#39;qubit&#39; is not defined</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.9999999999999996
+[0.25, 0.25]
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True
+Qobj data =
+[[0.5 0. ]
+ [0.  0.5]]
+Quantum object: dims = [[2], [2]], shape = (2, 2), type = oper, isherm = True
+Qobj data =
+[[0.25 0.25]
+ [0.25 0.25]]
+</pre>
 </div>
 </div>
 
@@ -12266,10 +12718,90 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">overlap</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Cost function implementation from the paper:</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">trashdm</span> <span class="o">=</span> <span class="n">ket2dm</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]))</span>
+
+<span class="c1"># This version is broken down in terms of basis vectors and ensemble probabilities:</span>
+<span class="c1">#C2 = np.sum([p_set[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)),trashdm) for i in range(len(psi_set))])</span>
+
+<span class="c1"># This version composes the input density matrix from the ensemble set of input states, then performs the transform:</span>
+<span class="n">inputdm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">ket2dm</span><span class="p">(</span><span class="n">psi_set</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psi_set</span><span class="p">))]</span>
+<span class="n">C2</span> <span class="o">=</span> <span class="n">fidelity</span><span class="p">((</span><span class="n">U</span><span class="o">*</span><span class="n">inputdm</span><span class="o">*</span><span class="n">U</span><span class="o">.</span><span class="n">dag</span><span class="p">())</span><span class="o">.</span><span class="n">ptrace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="n">k</span><span class="p">)),</span><span class="n">trashdm</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hydrogen-Wavefunction-Training-Set:">Hydrogen Wavefunction Training Set:<a class="anchor-link" href="#Hydrogen-Wavefunction-Training-Set:">&#182;</a></h2><p>In the infamous article, the authors test the autoencoder with a set of ground state wavefunctions of molecular hydrogen. The autoencoder is trained with a subset of 6 ground state wavefunctions at different radial H-H distances, and then the encoder is tested on states at other radii. The Hamiltonian for molecular hydrogen can be solved numerically (classically), which would give us a benchmark for the performance of the autoencoder. We are considering to also implement this set of test states - though it is proving to be challenging!</p>
+<p>The Hamiltonian for molecular hydrogen, under the Born-Oppenheimer non-relativistic approximation is given by:</p>
+<p>$H = h_{nuc} +\sum\limits_{pq}h_{pq}a_p^{\dagger}a_q^{\dagger} + \frac{1}{2}\sum\limits_{pqrs}h_{pqrs}a_p^{\dagger}a_q^{\dagger}a_r a_s$</p>
+<p>There are a few terms here: a nuclear term $h_{nuc}$, a single electron term, and a two electron term, with corresponding electron integrals $h_{pq}$ and $h_{pqrs}$. These terms express the probabilities of electrons occupying different molecular orbitals (e.g. $a_p^{\dagger}$ creates an electron in spin-orbital $p$).</p>
+<p>As in the case of qubits, we are free to choose the basis of this Hamiltonian to be whatever we like. In quantum chemistry, we choose a basis which corresponds to a specific set of orthogonal electron orbitals. Often, this basis is selected with the convenience of calculation in mind. For example, the STO-6G hydrogen minimal basis set is one such basis set which is optimized for numerical approximation (the details of which we will perhaps need to explore later).</p>
+<p>Furthermore, in order to map this Hamiltonian to a quantum computer, we need to decompose it as a set of pauli rotation operations on single qubits. This is done by either the Bravi-Kitaev (BK) or Jordan-Wigner (JW) transformations. The result of the JW transformed Hamiltonian in the STO-6G basis is as follows:</p>
+<p>$H = c_0 I</p>
+<ul>
+<li>c_1 (Z_0 + Z_1) </li>
+<li>c_2 (Z_2 + Z_3)</li>
+<li>c_3 (Z_0 Z_1)</li>
+<li>c_4 (Z_0 Z_2 + Z_1 Z_3)</li>
+<li>c_5 (Z_1 Z_2 + Z_0 Z_3)</li>
+<li>c_6 (Z_2 Z_3)</li>
+<li>c_7 (Y_0 X_1 X_2 Y_3 - X_0 X_1 Y_2 Y_3 - Y_0 Y_1 X_2 X_3 + X_0 Y_1 Y_2 X_3)$</li>
+</ul>
+<p>Where $X_n, Y_n, Z_n$ are a pauli matrices acting on the $n$th qubit, and $c_n$ are coefficients which depend on the radial H-H distance.</p>
+<p>The Hamiltonian is implemented in qutip below:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[72]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Reproducing the test set based on the STO-6G minimum basis set of hydrogen</span>
+<span class="c1"># From paper:</span>
+
+<span class="k">def</span> <span class="nf">makepaulin</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">P</span><span class="p">):</span>
+    <span class="n">PN</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+        <span class="n">tmp</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">P</span>
+        <span class="n">Pn</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="n">PN</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Pn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PN</span>
+
+<span class="n">N</span><span class="o">=</span><span class="mi">4</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">makepaulin</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">sigmax</span><span class="p">())</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">makepaulin</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">sigmay</span><span class="p">())</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">makepaulin</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">sigmaz</span><span class="p">())</span>
+<span class="n">IN</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">([</span><span class="n">qeye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)])</span>
+
+<span class="c1"># setting all coefficients to 1</span>
+<span class="p">[</span><span class="n">c0</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">c3</span><span class="p">,</span><span class="n">c4</span><span class="p">,</span><span class="n">c5</span><span class="p">,</span><span class="n">c6</span><span class="p">,</span><span class="n">c7</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    
+<span class="n">H</span> <span class="o">=</span> <span class="p">(</span><span class="n">c0</span><span class="o">*</span><span class="n">IN</span> <span class="o">+</span> 
+<span class="n">c1</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> 
+<span class="n">c2</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">Z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> 
+<span class="n">c3</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> 
+<span class="n">c4</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> 
+<span class="n">c5</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">Z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> 
+<span class="n">c6</span><span class="o">*</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">+</span> 
+<span class="n">c7</span><span class="o">*</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12285,20 +12817,45 @@ div#notebook {
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-115-96c015efeb20&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
-<span class="ansi-green-fg">----&gt; 1</span><span class="ansi-red-fg"> </span>overlap<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">NameError</span>: name &#39;overlap&#39; is not defined</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Quantum object: dims = [[2, 2, 2, 2], [2, 2, 2, 2]], shape = (16, 16), type = oper, isherm = True
+Qobj data =
+[[11.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  3.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  3.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0. -1.  0.  0.  0.  0.  0.  0.  0.  0.  4.  0.  0.  0.]
+ [ 0.  0.  0.  0.  3.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0. -1.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0. -1.  0.  0. -4.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0. -1.  0.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  3.  0.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0. -4.  0.  0. -1.  0.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0. -1.  0.  0.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0. -1.  0.  0.  0.  0.]
+ [ 0.  0.  0.  4.  0.  0.  0.  0.  0.  0.  0.  0. -1.  0.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0. -1.  0.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0. -1.  0.]
+ [ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  0.  3.]]
+</pre>
 </div>
 </div>
 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In order to advance from here, we need to compute the coefficients of this Hamiltonian (which depend on radial distance between H atoms), and solve the Schroedinger equation to find ground state energies (in Hartrees) at different distances to form the set of training states.</p>
+<p>I think this requires an optimized solver of Schroedinger's equation, which is beyond probably beyond the scope of this project to implement. We could also use a variational quantum eigensolver, but that requires it's own detailed investigation as well.</p>
+<p>One potential workaround could be to use PyQuante - a python library which is built to perform these kinds of caluculations (STO-6G hydrogen minimal basis set approximation). It's a dated python module, and thus far I've had version control issues getting it to integrate here.</p>
+<p>I have requested a chemsitry textbook from the library which might lay out the calculation in more detail for us.</p>
+<p>Until then we might need to think of a simpler test set or reach out to Zapata.</p>
+
+</div>
+</div>
 </div>
     </div>
   </div>
