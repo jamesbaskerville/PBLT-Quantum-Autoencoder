@@ -5,8 +5,8 @@ mkvirtualenv pblt
 pip3 install numpy
 pip3 install Cython
 pip3 install scipy
+conda config --add channels http://conda.anaconda.org/psi4
+python -m conda install psi4
 pip3 install -r setup/requirements.txt
-pip3 install openfermion
-pip3 install openfermionpsi4
 ipython kernel install --user --name=pblt
 lssitepackages

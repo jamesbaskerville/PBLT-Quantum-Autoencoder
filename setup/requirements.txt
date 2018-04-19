@@ -9,3 +9,5 @@ quantum-grove
 ipykernel
 tqdm
 executor
+openfermion
+openfermionpsi4
