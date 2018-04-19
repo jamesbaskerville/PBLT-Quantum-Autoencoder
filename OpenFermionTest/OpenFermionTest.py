@@ -1,7 +1,15 @@
 
 # coding: utf-8
 
-# In[43]:
+# In[1]:
+
+
+import os
+import sys
+sys.path
+
+
+# In[2]:
 
 
 # https://github.com/quantumlib/OpenFermion-Psi4/blob/master/examples/openfermionpsi4_demo.ipynb
@@ -11,16 +19,17 @@ from openfermionpsi4 import run_psi4
 import matplotlib.pyplot as plt
 from openfermion.transforms import get_fermion_operator, jordan_wigner, get_sparse_operator
 from qutip import *
+import numpy as np
 
 
-# In[68]:
+# In[3]:
 
 
 # Set molecule parameters.
 basis = 'sto-3g'
 multiplicity = 1
-bond_length_interval = 0.05
-n_points = 55
+bond_length_interval = 0.1
+n_points = 20
 
 # Set calculation parameters.
 run_scf = 1
@@ -44,7 +53,7 @@ for point in range(1, n_points + 1):
     molecule = MolecularData(
         geometry, basis, multiplicity,
         description=str(round(bond_length, 2)),
-        filename="{}data".format(basis))
+        filename="data/{}-{}data".format(basis, bond_length))
     
     # Run Psi4.
     molecule = run_psi4(molecule,
@@ -61,7 +70,7 @@ for point in range(1, n_points + 1):
     hamiltonians += [hamiltonian]
 
 
-# In[51]:
+# In[4]:
 
 
 def gen_eigenstates(qf_hamiltonians):
@@ -77,13 +86,13 @@ def gen_eigenstates(qf_hamiltonians):
     return groundenergies, groundstates
 
 
-# In[69]:
+# In[5]:
 
 
 groundenergies, groundstates = gen_eigenstates(hamiltonians)
 
 
-# In[72]:
+# In[6]:
 
 
 plt.plot(bond_lengths, groundenergies, 'bo-')
