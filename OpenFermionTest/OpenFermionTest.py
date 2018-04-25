@@ -1,14 +1,6 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
-import os
-import sys
-sys.path
-
-
 # In[2]:
 
 
@@ -22,14 +14,30 @@ from qutip import *
 import numpy as np
 
 
-# In[3]:
+# In[24]:
+
+
+def gen_eigenstates(qf_hamiltonians):
+    groundenergies = []
+    groundstates = []
+    for qf_ham in qf_hamiltonians:
+        ham = Qobj(get_sparse_operator(qf_ham).todense())
+        eigenstates = ham.eigenstates()
+        i = np.argmin(eigenstates[0])
+        groundenergy, groundstate = eigenstates[0][i], eigenstates[1][i]
+        groundenergies += [groundenergy]
+        groundstates += [groundstates]
+    return groundenergies, groundstates
+
+
+# In[35]:
 
 
 # Set molecule parameters.
 basis = 'sto-3g'
 multiplicity = 1
-bond_length_interval = 0.1
-n_points = 20
+bond_length_interval = 0.06
+n_points = 50
 
 # Set calculation parameters.
 run_scf = 1
@@ -53,7 +61,7 @@ for point in range(1, n_points + 1):
     molecule = MolecularData(
         geometry, basis, multiplicity,
         description=str(round(bond_length, 2)),
-        filename="data/{}-{}data".format(basis, bond_length))
+        filename="data/{}.{}".format(basis, np.round(bond_length, 2)))
     
     # Run Psi4.
     molecule = run_psi4(molecule,
@@ -70,34 +78,25 @@ for point in range(1, n_points + 1):
     hamiltonians += [hamiltonian]
 
 
-# In[4]:
-
-
-def gen_eigenstates(qf_hamiltonians):
-    groundenergies = []
-    groundstates = []
-    for qf_ham in qf_hamiltonians:
-        ham = Qobj(get_sparse_operator(qf_ham).todense())
-        eigenstates = ham.eigenstates()
-        i = np.argmin(eigenstates[0])
-        groundenergy, groundstate = eigenstates[0][i], eigenstates[1][i]
-        groundenergies += [groundenergy]
-        groundstates += [groundstates]
-    return groundenergies, groundstates
-
-
-# In[5]:
+# In[32]:
 
 
 groundenergies, groundstates = gen_eigenstates(hamiltonians)
 
 
-# In[6]:
+# In[33]:
 
 
 plt.plot(bond_lengths, groundenergies, 'bo-')
 plt.ylim([-1.15, -0.90])
 plt.xlim([0.3, 3.0])
+plt.show()
+
+
+# In[3]:
+
+
+np.random.choice()
 
 
 # In[55]:
