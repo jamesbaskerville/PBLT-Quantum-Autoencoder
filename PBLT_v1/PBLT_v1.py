@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[7]:
+# In[1]:
 
 
 import numpy as np
@@ -144,7 +144,7 @@ def recombine_params(first, mid, last):
 
 # #### Circuit Implementation
 
-# In[3]:
+# In[5]:
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
@@ -188,7 +188,7 @@ def create_circuit(n, all_params):
     return gate_prod(n, gates)
 
 
-# In[132]:
+# In[6]:
 
 
 # returns n, number of gates needed, number of params needed
@@ -224,7 +224,7 @@ def obj_func(params, *args):
     return sum(overlaps)
 
 
-# In[117]:
+# In[7]:
 
 
 # create qubit from a rand float

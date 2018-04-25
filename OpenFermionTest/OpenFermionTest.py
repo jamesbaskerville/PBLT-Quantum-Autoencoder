@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[5]:
 
 
 # https://github.com/quantumlib/OpenFermion-Psi4/blob/master/examples/openfermionpsi4_demo.ipynb
@@ -12,11 +12,18 @@ import matplotlib.pyplot as plt
 from openfermion.transforms import get_fermion_operator, jordan_wigner, get_sparse_operator
 from qutip import *
 import numpy as np
+import h5py
+from tqdm import tqdm
 
 
-# In[24]:
+# In[21]:
 
 
+def save_hamiltonian(qf_ham, filename):
+    ham = get_sparse_operator(qf_ham).todense()
+    with h5py.File("hamiltonians/" + filename, "w") as f:
+        dset = f.create_dataset("hamiltonian", data=ham)
+        
 def gen_eigenstates(qf_hamiltonians):
     groundenergies = []
     groundstates = []
@@ -30,7 +37,7 @@ def gen_eigenstates(qf_hamiltonians):
     return groundenergies, groundstates
 
 
-# In[35]:
+# In[18]:
 
 
 # Set molecule parameters.
@@ -54,7 +61,7 @@ fci_energies = []
 bond_lengths = []
 hamiltonians = []
 n_qubitss = []
-for point in range(1, n_points + 1):
+for point in tqdm(range(1, n_points + 1)):
     bond_length = bond_length_interval * float(point)
     bond_lengths += [bond_length]
     geometry = [('H', (0., 0., 0.)), ('H', (0., 0., bond_length))]
@@ -76,15 +83,19 @@ for point in range(1, n_points + 1):
     hamiltonian = molecule.get_molecular_hamiltonian()
     hamiltonian = jordan_wigner(get_fermion_operator(hamiltonian))
     hamiltonians += [hamiltonian]
+    
+    # Save hamiltonians to disk
+    save_hamiltonian(hamiltonian, "{}.{}.hdf5".format(basis, np.round(bond_length, 2)))
+    
 
 
-# In[32]:
+# In[22]:
 
 
 groundenergies, groundstates = gen_eigenstates(hamiltonians)
 
 
-# In[33]:
+# In[23]:
 
 
 plt.plot(bond_lengths, groundenergies, 'bo-')
@@ -93,10 +104,11 @@ plt.xlim([0.3, 3.0])
 plt.show()
 
 
-# In[3]:
+# In[24]:
 
 
-np.random.choice()
+with h5py.File("bond_lengths.hdf5", "w") as f:
+    dset = f.create_dataset("bond_lengths", data=bond_lengths)
 
 
 # In[55]:
