@@ -23,18 +23,6 @@ def save_hamiltonian(qf_ham, filename):
     ham = get_sparse_operator(qf_ham).todense()
     with h5py.File("hamiltonians/" + filename, "w") as f:
         dset = f.create_dataset("hamiltonian", data=ham)
-        
-def gen_eigenstates(qf_hamiltonians):
-    groundenergies = []
-    groundstates = []
-    for qf_ham in qf_hamiltonians:
-        ham = Qobj(get_sparse_operator(qf_ham).todense())
-        eigenstates = ham.eigenstates()
-        i = np.argmin(eigenstates[0])
-        groundenergy, groundstate = eigenstates[0][i], eigenstates[1][i]
-        groundenergies += [groundenergy]
-        groundstates += [groundstates]
-    return groundenergies, groundstates
 
 
 # In[18]:
@@ -82,30 +70,9 @@ for point in tqdm(range(1, n_points + 1)):
     n_qubitss += [molecule.n_qubits]
     hamiltonian = molecule.get_molecular_hamiltonian()
     hamiltonian = jordan_wigner(get_fermion_operator(hamiltonian))
-    hamiltonians += [hamiltonian]
-    
+
     # Save hamiltonians to disk
     save_hamiltonian(hamiltonian, "{}.{}.hdf5".format(basis, np.round(bond_length, 2)))
-    
-
-
-# In[22]:
-
-
-groundenergies, groundstates = gen_eigenstates(hamiltonians)
-
-
-# In[23]:
-
-
-plt.plot(bond_lengths, groundenergies, 'bo-')
-plt.ylim([-1.15, -0.90])
-plt.xlim([0.3, 3.0])
-plt.show()
-
-
-# In[24]:
-
 
 with h5py.File("bond_lengths.hdf5", "w") as f:
     dset = f.create_dataset("bond_lengths", data=bond_lengths)
@@ -114,7 +81,7 @@ with h5py.File("bond_lengths.hdf5", "w") as f:
 # In[55]:
 
 
-# # Self-implementation
+# # Self-implementation of the hamiltonian
 # letter_to_op = {
 #     'X':sigmax(),
 #     'Y':sigmay(),

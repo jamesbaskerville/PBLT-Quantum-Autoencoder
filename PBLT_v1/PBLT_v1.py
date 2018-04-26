@@ -1,13 +1,14 @@
 
 # coding: utf-8
 
-# In[27]:
+# In[57]:
 
 
 import numpy as np
 from qutip import *
 from scipy.optimize import minimize
 import h5py
+import matplotlib.pyplot as plt
 
 
 # #### Parameters
@@ -20,7 +21,7 @@ import h5py
 
 # #### QuTip Helper Functions
 
-# In[13]:
+# In[2]:
 
 
 # apply given single-qubit gate to any qubit in system of n qubits
@@ -43,7 +44,7 @@ def gate_prod(n, gates):
 
 # #### Arbitrary Rotation Gates (single-qubit and controlled)
 
-# In[14]:
+# In[3]:
 
 
 # https://arxiv.org/abs/quant-ph/9503016
@@ -69,7 +70,7 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Parameter Manipulation
 
-# In[15]:
+# In[4]:
 
 
 def init_params(n_params, method=np.ones):
@@ -88,7 +89,7 @@ def recombine_params(first, mid, last):
 # The circuit outlined in red below is the unitary gate for encoding (in this case, for 4 qubit inputs).
 # ![arbitrary_rotation_gate_circuit](https://image.ibb.co/ji9XBc/unit_cell_arb_rot.png)
 
-# In[16]:
+# In[5]:
 
 
 # # create circuit from parameters
@@ -136,7 +137,7 @@ def recombine_params(first, mid, last):
 #     return gates
 
 
-# In[17]:
+# In[6]:
 
 
 # gate_product = gate_prod(n, gates)
@@ -145,7 +146,7 @@ def recombine_params(first, mid, last):
 
 # #### Circuit Implementation
 
-# In[18]:
+# In[7]:
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
@@ -189,7 +190,7 @@ def create_circuit(n, all_params):
     return gate_prod(n, gates)
 
 
-# In[19]:
+# In[8]:
 
 
 # returns n, number of gates needed, number of params needed
@@ -225,7 +226,7 @@ def obj_func(params, *args):
     return sum(overlaps)
 
 
-# In[20]:
+# In[9]:
 
 
 # create qubit from a rand float
@@ -257,27 +258,22 @@ def gen_data(n_orig, n_enc, data_count=100):
     return np.array(data)
 
 
-# In[21]:
+# In[10]:
 
 
-data = gen_data(2,1,data_count=1000)
+# data = gen_data(2,1,data_count=1000)
+# initial_params = init_params(num_params)
+# data[:5]
+# # minimize(obj_func, initial_params, method='Nelder-Mead')
 
 
-# In[22]:
+# In[11]:
 
 
-initial_params = init_params(num_params)
-data[:5]
-# minimize(obj_func, initial_params, method='Nelder-Mead')
-
-
-# In[ ]:
-
-
-U = sigmax()
-instates = np.array([Qobj([[0],[1]]), Qobj([[1],[0]])])
-outstates = U*instates
-sum(1-v_overlap(instates, outstates))
+# U = sigmax()
+# instates = np.array([Qobj([[0],[1]]), Qobj([[1],[0]])])
+# outstates = U*instates
+# sum(1-v_overlap(instates, outstates))
 
 
 # ## Density Matrix Overview:
@@ -308,7 +304,7 @@ sum(1-v_overlap(instates, outstates))
 # 
 # As an example, we construct the density matrix for basis states:
 
-# In[ ]:
+# In[12]:
 
 
 # Basis state 0 
@@ -319,14 +315,14 @@ rho = q0*q0.dag()
 rho
 
 
-# In[ ]:
+# In[13]:
 
 
 # note the following function also works
 ket2dm(q0)
 
 
-# In[ ]:
+# In[14]:
 
 
 # For basis state 1
@@ -337,7 +333,7 @@ ket2dm(q1)
 
 # These pure, orthogonal basis states are equivalent to fock (photon number) states, and qutip has a built in function:
 
-# In[ ]:
+# In[15]:
 
 
 fock_dm(2,1)
@@ -345,7 +341,7 @@ fock_dm(2,1)
 
 # Nice! We can simply read the probability of the system being in state zero or one by looking at the diagonal entries. What happens for a superpostion?
 
-# In[ ]:
+# In[16]:
 
 
 # equal superposition state
@@ -358,7 +354,7 @@ ket2dm(q)
 # 
 # The most important property is that for a pure state, the trace (sum of diagonals) of the density matrix is 1. This is related exactly to the normalized nature of a pure state.
 
-# In[ ]:
+# In[17]:
 
 
 ket2dm(q).tr()
@@ -374,7 +370,7 @@ ket2dm(q).tr()
 # 
 # $\rho = \sum\limits_{i}{p_i|\psi_i><\psi_i|}$
 
-# In[ ]:
+# In[18]:
 
 
 q = 1/2*basis(2,0) + 1/2*basis(2,1)
@@ -392,7 +388,7 @@ ket2dm(q)
 # 
 # $\text{Tr}[\rho_{max}] = 1/D$ where $D$ is the dimensionality of the system. In the case of qubits D = 2.
 
-# In[ ]:
+# In[19]:
 
 
 ket2dm(q).tr()
@@ -444,7 +440,7 @@ ket2dm(q).tr()
 # Qutip Fidelity Function: http://qutip.org/docs/3.1.0/apidoc/functions.html
 # * Search fidelity - computes the fidelity of two density matrices
 
-# In[ ]:
+# In[20]:
 
 
 # Cost Function Testing:
@@ -465,7 +461,7 @@ print(1/2*ket2dm(psi[0])+1/2*ket2dm(psi[1]))
 print(ket2dm(1/2*psi[0]+1/2*psi[1]))
 
 
-# In[ ]:
+# In[25]:
 
 
 # Cost function implementation from the paper:
@@ -477,9 +473,9 @@ trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 # This version is broken down in terms of basis vectors and ensemble probabilities:
 #C2 = np.sum([p_set[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)),trashdm) for i in range(len(psi_set))])
 
-# This version composes the input density matrix from the ensemble set of input states, then performs the transform:
-inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))]
-C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
+# # This version composes the input density matrix from the ensemble set of input states, then performs the transform:
+# inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])
+# C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 
 
 # ## Hydrogen Wavefunction Training Set:
@@ -509,40 +505,40 @@ C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 # 
 # The Hamiltonian is implemented in qutip below: 
 
-# In[ ]:
+# In[26]:
 
 
-# Reproducing the test set based on the STO-6G minimum basis set of hydrogen
-# From paper:
+# # Reproducing the test set based on the STO-6G minimum basis set of hydrogen
+# # From paper:
 
-def makepaulin(N,P):
-    PN = []
-    for n in range(N):
-        tmp = [qeye(2) for _ in range(N)]
-        tmp[n] = P
-        Pn = tensor(tmp)
-        PN.append(Pn)
-    return PN
+# def makepaulin(N,P):
+#     PN = []
+#     for n in range(N):
+#         tmp = [qeye(2) for _ in range(N)]
+#         tmp[n] = P
+#         Pn = tensor(tmp)
+#         PN.append(Pn)
+#     return PN
 
-N=4
-X = makepaulin(N,sigmax())
-Y = makepaulin(N,sigmay())
-Z = makepaulin(N,sigmaz())
-IN = tensor([qeye(2) for _ in range(N)])
+# N=4
+# X = makepaulin(N,sigmax())
+# Y = makepaulin(N,sigmay())
+# Z = makepaulin(N,sigmaz())
+# IN = tensor([qeye(2) for _ in range(N)])
 
-# setting all coefficients to 1
-[c0,c1,c2,c3,c4,c5,c6,c7] = [1,1,1,1,1,1,1,1]
+# # setting all coefficients to 1
+# [c0,c1,c2,c3,c4,c5,c6,c7] = [1,1,1,1,1,1,1,1]
     
-H = (c0*IN + 
-c1*(Z[0]+Z[1]) + 
-c2*(Z[2]+Z[3]) + 
-c3*Z[0]*Z[1] + 
-c4*(Z[0]*Z[2] + Z[1]*Z[3]) + 
-c5*(Z[1]*Z[2]+Z[0]*Z[3]) + 
-c6*(Z[2]*Z[3]) + 
-c7*(Y[0]*X[1]*X[2]*Y[3] - X[0]*X[1]*Y[2]*Y[3] - Y[0]*Y[1]*X[2]*X[3] + X[0]*Y[1]*Y[2]*X[3]))
+# H = (c0*IN + 
+# c1*(Z[0]+Z[1]) + 
+# c2*(Z[2]+Z[3]) + 
+# c3*Z[0]*Z[1] + 
+# c4*(Z[0]*Z[2] + Z[1]*Z[3]) + 
+# c5*(Z[1]*Z[2]+Z[0]*Z[3]) + 
+# c6*(Z[2]*Z[3]) + 
+# c7*(Y[0]*X[1]*X[2]*Y[3] - X[0]*X[1]*Y[2]*Y[3] - Y[0]*Y[1]*X[2]*X[3] + X[0]*Y[1]*Y[2]*X[3]))
 
-print(H)
+# print(H)
 
 
 # In order to advance from here, we need to compute the coefficients of this Hamiltonian (which depend on radial distance between H atoms), and solve the Schroedinger equation to find ground state energies (in Hartrees) at different distances to form the set of training states. 
@@ -560,7 +556,7 @@ print(H)
 # 
 # each bond-length has a hamiltonian stored at `hamiltonians/sto-3g.<bond-length>.hdf5`
 
-# In[62]:
+# In[27]:
 
 
 # get the list of bond lengths for which we precomputed hamiltonians
@@ -578,11 +574,11 @@ else:
     bond_lengths = np.round(bond_lengths, 2)
 
 
-# In[72]:
+# In[51]:
 
 
-# dictionary of hamiltonians indexed by bond_length
-hamiltonians = {}
+# list of hamiltonians
+hamiltonians = []
 
 for bond_length in bond_lengths:
     hamiltonian = None
@@ -591,7 +587,6 @@ for bond_length in bond_lengths:
     with h5py.File("hamiltonians/sto-3g.{}.hdf5".format(round(bond_length, 2)), 'r') as f:
         try:
             dset = f['hamiltonian']
-            hamiltonian = np.zeros(dset.shape)
             hamiltonian = dset[()]
             #print(hamiltonian.shape)
             #dset.read_direct(hamiltonian)
@@ -603,14 +598,44 @@ for bond_length in bond_lengths:
         continue
     
     # add hamiltonian to dictionary of hamiltonians
-    hamiltonians[bond_length] = hamiltonian
+    hamiltonians.append(Qobj(hamiltonian))
+    
+hamiltonians = np.array(hamiltonians)
 
 
-# In[69]:
+# In[52]:
 
 
-# # create density matrix dictionary
-# focks = {}
-# for bond_length in hamiltonians.keys():
-#     focks[bond_length] = 
+def get_groundstate(hamiltonian):
+    return hamiltonian.groundstate()
+groundstatize = np.vectorize(get_groundstate)
+
+
+# In[79]:
+
+
+# create density matrix dictionary
+groundenergies, groundstates = groundstatize(hamiltonians)
+training_indices = [5, 7, np.argmin(groundenergies), 20, 30, 37]
+
+
+# In[82]:
+
+
+# plot hydrogen atom bond-length vs. ground-state energies
+# red points are those states selected for training, everything else is for testing
+plt.plot(bond_lengths, groundenergies, 'ob-')
+plt.plot(bond_lengths[training_indices], groundenergies[training_indices], 'or')
+plt.ylim([-1.2, -0.8])
+plt.xlim([0, 2.5])
+
+
+# In[84]:
+
+
+# generate density matrices for each groundstate
+focks = []
+for i in range(len(bond_lengths)):
+    focks.append(ket2dm(groundstates[i]))
+focks = np.array(focks)
 
