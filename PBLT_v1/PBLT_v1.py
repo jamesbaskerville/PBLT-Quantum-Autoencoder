@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[57]:
+# In[1]:
 
 
 import numpy as np
@@ -70,11 +70,16 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Parameter Manipulation
 
-# In[4]:
+# In[81]:
 
 
-def init_params(n_params, method=np.ones):
-    return method(n_params)
+def init_consts(n_qubits):
+    n_gates = n * (n - 1) + 2 * n
+    n_params = n_gates * 3
+    return n_gates, n_params
+
+def init_params(n_params, init_method=np.ones):
+    return init_method(n_params)
 
 def split_params(n, params):
     return (params[:3*n].reshape(n, 3),
@@ -146,11 +151,11 @@ def recombine_params(first, mid, last):
 
 # #### Circuit Implementation
 
-# In[7]:
+# In[79]:
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
-def wrapper(n, params):
+def wrapper_gate(n, params):
     assert (len(params) == n)
     gates = []
     for tgt, rot_params in enumerate(params):
@@ -158,7 +163,7 @@ def wrapper(n, params):
     return gate_prod(n, gates)
 
 # The n-1 gates in each "blue box" (set of controlled rotation gates)
-def blue_box(n, params, ctrl):
+def blue_box_gate(n, params, ctrl):
     p_index = 0
     gates = []
     for tgt in range(n):
@@ -171,21 +176,21 @@ def blue_box(n, params, ctrl):
     return gate_prod(n, gates)
 
 # The circuit as a whole -- front wrapper, blue boxes, back wrapper
-def create_circuit(n, all_params):
+def create_circuit_gate(n, all_params):
     gates = []
     
     # split parameters
     f, m, b = split_params(n, all_params)
     
     # front wrapper
-    gates.append(wrapper(n, f))
+    gates.append(wrapper_gate(n, f))
     
     # blue boxes
     for i in range(n):
-        gates.append(blue_box(n, m[i], i))
+        gates.append(blue_box_gate(n, m[i], i))
     
     # back wrapper
-    gates.append(wrapper(n, b))
+    gates.append(wrapper_gate(n, b))
     
     return gate_prod(n, gates)
 
@@ -216,7 +221,7 @@ def obj_func(params, *args):
     in_states = args[1:]
     
     # create encoding operator from parameters of the rotation gates
-    encoding_op = create_circuit(n, params)
+    encoding_op = create_circuit_gate(n, params)
     
     # apply encoding circuit to all training data
     # (should probably split this up into epochs)
@@ -461,7 +466,7 @@ print(1/2*ket2dm(psi[0])+1/2*ket2dm(psi[1]))
 print(ket2dm(1/2*psi[0]+1/2*psi[1]))
 
 
-# In[25]:
+# In[21]:
 
 
 # Cost function implementation from the paper:
@@ -505,7 +510,7 @@ trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 # 
 # The Hamiltonian is implemented in qutip below: 
 
-# In[26]:
+# In[22]:
 
 
 # # Reproducing the test set based on the STO-6G minimum basis set of hydrogen
@@ -556,7 +561,7 @@ trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 # 
 # each bond-length has a hamiltonian stored at `hamiltonians/sto-3g.<bond-length>.hdf5`
 
-# In[27]:
+# In[23]:
 
 
 # get the list of bond lengths for which we precomputed hamiltonians
@@ -574,7 +579,7 @@ else:
     bond_lengths = np.round(bond_lengths, 2)
 
 
-# In[51]:
+# In[24]:
 
 
 # list of hamiltonians
@@ -603,7 +608,7 @@ for bond_length in bond_lengths:
 hamiltonians = np.array(hamiltonians)
 
 
-# In[52]:
+# In[25]:
 
 
 def get_groundstate(hamiltonian):
@@ -611,26 +616,25 @@ def get_groundstate(hamiltonian):
 groundstatize = np.vectorize(get_groundstate)
 
 
-# In[79]:
+# In[29]:
 
 
 # create density matrix dictionary
 groundenergies, groundstates = groundstatize(hamiltonians)
-training_indices = [5, 7, np.argmin(groundenergies), 20, 30, 37]
 
 
-# In[82]:
+# In[49]:
 
 
 # plot hydrogen atom bond-length vs. ground-state energies
 # red points are those states selected for training, everything else is for testing
 plt.plot(bond_lengths, groundenergies, 'ob-')
-plt.plot(bond_lengths[training_indices], groundenergies[training_indices], 'or')
+#plt.plot(bond_lengths[training_indices], groundenergies[training_indices], 'or')
 plt.ylim([-1.2, -0.8])
 plt.xlim([0, 2.5])
 
 
-# In[84]:
+# In[28]:
 
 
 # generate density matrices for each groundstate
@@ -638,4 +642,62 @@ focks = []
 for i in range(len(bond_lengths)):
     focks.append(ket2dm(groundstates[i]))
 focks = np.array(focks)
+
+
+# ### Train the Autoencoder!
+
+# In[75]:
+
+
+def train_test_split(data, train_proportion, train_is=None):
+    """
+    Divide data into training and test sets, using specific indices if given
+    """
+    train_sz = int(np.round(len(data) * train_proportion))
+    training_indices, testing_indicies = [], []
+    
+    # use provided training indices, then fill in the rest
+    if train_is is not None:
+        training_indices = np.concatenate(
+            (train_is, np.random.choice([i for i in np.arange(len(data)) if i not in train_is], 
+                                        train_sz - len(train_is), replace=False)))
+    else:
+        training_indices = np.random.choice(np.arange(len(data)), train_sz, replace=False)
+    
+    testing_indicies = np.array([i for i in range(len(data)) if i not in training_indices])
+    return data[training_indices], data[testing_indicies]
+
+
+# In[76]:
+
+
+train_set, test_set = train_test_split(groundstates, .1, train_is=[np.argmin(groundenergies)])
+
+
+# In[77]:
+
+
+print((len(train_set), len(test_set)))
+groundstates[np.argmin(groundenergies)] == train_set[0]
+
+
+# In[89]:
+
+
+# Cost function implementation from the paper:
+n = 5
+k = 2
+
+n_gates, n_params = init_consts(n)
+# initialize parameters randomly on (-1, 1]
+params = init_params(n_params, lambda x: 2*np.random.rand(x)-1)
+
+trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
+
+# This version is broken down in terms of basis vectors and ensemble probabilities:
+#C2 = np.sum([p_set[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)),trashdm) for i in range(len(psi_set))])
+
+# # This version composes the input density matrix from the ensemble set of input states, then performs the transform:
+# inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])
+# C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 
