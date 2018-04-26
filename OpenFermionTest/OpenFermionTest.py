@@ -67,7 +67,7 @@ for point in tqdm(range(1, n_points + 1)):
     geometry = [('H', (0., 0., 0.)), ('H', (0., 0., bond_length))]
     molecule = MolecularData(
         geometry, basis, multiplicity,
-        description=str(round(bond_length, 2)),
+        description=str(np.round(bond_length, 2)),
         filename="data/{}.{}".format(basis, np.round(bond_length, 2)))
     
     # Run Psi4.

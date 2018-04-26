@@ -1,12 +1,13 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[27]:
 
 
 import numpy as np
 from qutip import *
 from scipy.optimize import minimize
+import h5py
 
 
 # #### Parameters
@@ -19,7 +20,7 @@ from scipy.optimize import minimize
 
 # #### QuTip Helper Functions
 
-# In[2]:
+# In[13]:
 
 
 # apply given single-qubit gate to any qubit in system of n qubits
@@ -42,7 +43,7 @@ def gate_prod(n, gates):
 
 # #### Arbitrary Rotation Gates (single-qubit and controlled)
 
-# In[3]:
+# In[14]:
 
 
 # https://arxiv.org/abs/quant-ph/9503016
@@ -68,7 +69,7 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Parameter Manipulation
 
-# In[4]:
+# In[15]:
 
 
 def init_params(n_params, method=np.ones):
@@ -87,7 +88,7 @@ def recombine_params(first, mid, last):
 # The circuit outlined in red below is the unitary gate for encoding (in this case, for 4 qubit inputs).
 # ![arbitrary_rotation_gate_circuit](https://image.ibb.co/ji9XBc/unit_cell_arb_rot.png)
 
-# In[5]:
+# In[16]:
 
 
 # # create circuit from parameters
@@ -135,7 +136,7 @@ def recombine_params(first, mid, last):
 #     return gates
 
 
-# In[6]:
+# In[17]:
 
 
 # gate_product = gate_prod(n, gates)
@@ -144,7 +145,7 @@ def recombine_params(first, mid, last):
 
 # #### Circuit Implementation
 
-# In[5]:
+# In[18]:
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
@@ -188,7 +189,7 @@ def create_circuit(n, all_params):
     return gate_prod(n, gates)
 
 
-# In[6]:
+# In[19]:
 
 
 # returns n, number of gates needed, number of params needed
@@ -224,7 +225,7 @@ def obj_func(params, *args):
     return sum(overlaps)
 
 
-# In[7]:
+# In[20]:
 
 
 # create qubit from a rand float
@@ -256,13 +257,13 @@ def gen_data(n_orig, n_enc, data_count=100):
     return np.array(data)
 
 
-# In[99]:
+# In[21]:
 
 
 data = gen_data(2,1,data_count=1000)
 
 
-# In[103]:
+# In[22]:
 
 
 initial_params = init_params(num_params)
@@ -270,7 +271,7 @@ data[:5]
 # minimize(obj_func, initial_params, method='Nelder-Mead')
 
 
-# In[133]:
+# In[ ]:
 
 
 U = sigmax()
@@ -307,7 +308,7 @@ sum(1-v_overlap(instates, outstates))
 # 
 # As an example, we construct the density matrix for basis states:
 
-# In[18]:
+# In[ ]:
 
 
 # Basis state 0 
@@ -318,14 +319,14 @@ rho = q0*q0.dag()
 rho
 
 
-# In[19]:
+# In[ ]:
 
 
 # note the following function also works
 ket2dm(q0)
 
 
-# In[20]:
+# In[ ]:
 
 
 # For basis state 1
@@ -336,7 +337,7 @@ ket2dm(q1)
 
 # These pure, orthogonal basis states are equivalent to fock (photon number) states, and qutip has a built in function:
 
-# In[21]:
+# In[ ]:
 
 
 fock_dm(2,1)
@@ -344,7 +345,7 @@ fock_dm(2,1)
 
 # Nice! We can simply read the probability of the system being in state zero or one by looking at the diagonal entries. What happens for a superpostion?
 
-# In[31]:
+# In[ ]:
 
 
 # equal superposition state
@@ -357,7 +358,7 @@ ket2dm(q)
 # 
 # The most important property is that for a pure state, the trace (sum of diagonals) of the density matrix is 1. This is related exactly to the normalized nature of a pure state.
 
-# In[28]:
+# In[ ]:
 
 
 ket2dm(q).tr()
@@ -373,7 +374,7 @@ ket2dm(q).tr()
 # 
 # $\rho = \sum\limits_{i}{p_i|\psi_i><\psi_i|}$
 
-# In[29]:
+# In[ ]:
 
 
 q = 1/2*basis(2,0) + 1/2*basis(2,1)
@@ -391,7 +392,7 @@ ket2dm(q)
 # 
 # $\text{Tr}[\rho_{max}] = 1/D$ where $D$ is the dimensionality of the system. In the case of qubits D = 2.
 
-# In[30]:
+# In[ ]:
 
 
 ket2dm(q).tr()
@@ -443,7 +444,7 @@ ket2dm(q).tr()
 # Qutip Fidelity Function: http://qutip.org/docs/3.1.0/apidoc/functions.html
 # * Search fidelity - computes the fidelity of two density matrices
 
-# In[47]:
+# In[ ]:
 
 
 # Cost Function Testing:
@@ -508,7 +509,7 @@ C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 # 
 # The Hamiltonian is implemented in qutip below: 
 
-# In[72]:
+# In[ ]:
 
 
 # Reproducing the test set based on the STO-6G minimum basis set of hydrogen
@@ -553,3 +554,63 @@ print(H)
 # I have requested a chemsitry textbook from the library which might lay out the calculation in more detail for us.
 # 
 # Until then we might need to think of a simpler test set or reach out to Zapata.
+
+# ### Using Data from OpenFermion!!
+# the bond lengths are stored in `bond_lengths.hdf5`
+# 
+# each bond-length has a hamiltonian stored at `hamiltonians/sto-3g.<bond-length>.hdf5`
+
+# In[62]:
+
+
+# get the list of bond lengths for which we precomputed hamiltonians
+with h5py.File("bond_lengths.hdf5", "r") as f:
+    try:
+        dset = f['bond_lengths']
+        bond_lengths = np.zeros(dset.shape)
+        dset.read_direct(bond_lengths)
+    except KeyError:
+        print("subgroup `bond_lengths` not in `bond_lengths.hdf5` data")
+        
+if type(bond_lengths) == type(None):
+    print("failure to read bond lengths")
+else:
+    bond_lengths = np.round(bond_lengths, 2)
+
+
+# In[72]:
+
+
+# dictionary of hamiltonians indexed by bond_length
+hamiltonians = {}
+
+for bond_length in bond_lengths:
+    hamiltonian = None
+    
+    # read hamiltonian from appropriate file
+    with h5py.File("hamiltonians/sto-3g.{}.hdf5".format(round(bond_length, 2)), 'r') as f:
+        try:
+            dset = f['hamiltonian']
+            hamiltonian = np.zeros(dset.shape)
+            hamiltonian = dset[()]
+            #print(hamiltonian.shape)
+            #dset.read_direct(hamiltonian)
+        except KeyError:
+            print("subgroup `hamiltonian` not in `hamiltonians/{}` data".format(round(bond_length, 2)))
+    
+    if type(hamiltonian) == type(None):
+        print("failure to read hamiltonian for bond length {}".format(round(bond_length, 2)))
+        continue
+    
+    # add hamiltonian to dictionary of hamiltonians
+    hamiltonians[bond_length] = hamiltonian
+
+
+# In[69]:
+
+
+# # create density matrix dictionary
+# focks = {}
+# for bond_length in hamiltonians.keys():
+#     focks[bond_length] = 
+
