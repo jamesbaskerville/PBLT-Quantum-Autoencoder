@@ -11910,7 +11910,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[81]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">init_consts</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
@@ -12024,7 +12024,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The n rotation gates (one on each qubit) that happen at the start and end.</span>
@@ -12075,16 +12075,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># returns n, number of gates needed, number of params needed</span>
-<span class="k">def</span> <span class="nf">init_consts</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="n">n_gates</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span>
-    <span class="n">n_params</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">n_gates</span>
-    <span class="k">return</span> <span class="n">n</span><span class="p">,</span> <span class="n">n_gates</span><span class="p">,</span> <span class="n">n_params</span>
-
-<span class="c1"># given input state and output state, returns estimated fidelity</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># given input state and output state, returns estimated fidelity</span>
 <span class="c1">#     we can cast to integer because this is the norm squared</span>
 <span class="c1">#     there&#39;s no longer any complex component</span>
 <span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">oup</span><span class="p">):</span>
@@ -12843,7 +12837,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create density matrix dictionary</span>
@@ -12857,7 +12851,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># plot hydrogen atom bond-length vs. ground-state energies</span>
@@ -12878,7 +12872,7 @@ Qobj data =
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[49]:</div>
+<div class="prompt output_prompt">Out[27]:</div>
 
 
 
@@ -12935,7 +12929,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[75]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">train_proportion</span><span class="p">,</span> <span class="n">train_is</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -12964,7 +12958,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[76]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_set</span><span class="p">,</span> <span class="n">test_set</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">groundstates</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">train_is</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">groundenergies</span><span class="p">)])</span>
@@ -12977,7 +12971,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[77]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_set</span><span class="p">)))</span>
@@ -13005,7 +12999,7 @@ Qobj data =
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[77]:</div>
+<div class="prompt output_prompt">Out[31]:</div>
 
 
 
@@ -13022,21 +13016,28 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Cost function implementation from the paper:</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="n">n_gates</span><span class="p">,</span> <span class="n">n_params</span> <span class="o">=</span> <span class="n">init_consts</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">n_train</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+
 <span class="c1"># initialize parameters randomly on (-1, 1]</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
 <span class="n">trashdm</span> <span class="o">=</span> <span class="n">ket2dm</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]))</span>
 
+<span class="n">U</span> <span class="o">=</span> <span class="n">create_circuit_gate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_train</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ket2dm</span><span class="p">(</span><span class="n">train_set</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">ptrace</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1">#train_dm1 = U*ket2dm(train_set[0])*U.dag()</span>
+
 <span class="c1"># This version is broken down in terms of basis vectors and ensemble probabilities:</span>
-<span class="c1">#C2 = np.sum([p_set[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)),trashdm) for i in range(len(psi_set))])</span>
+<span class="c1">#C2 = np.sum([probs[i] * fidelity((U*ket2dm(train_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_train)])</span>
 
 <span class="c1"># # This version composes the input density matrix from the ensemble set of input states, then performs the transform:</span>
 <span class="c1"># inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])</span>
@@ -13044,6 +13045,42 @@ Qobj data =
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-53-80521efd6f13&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span><span class="ansi-blue-fg">()</span>
+<span class="ansi-green-intense-fg ansi-bold">     13</span> probs <span class="ansi-blue-fg">=</span> np<span class="ansi-blue-fg">.</span>ones<span class="ansi-blue-fg">(</span>n_train<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     14</span> np<span class="ansi-blue-fg">.</span>arange<span class="ansi-blue-fg">(</span>n <span class="ansi-blue-fg">-</span> <span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">,</span>n <span class="ansi-blue-fg">+</span> k <span class="ansi-blue-fg">-</span> <span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 15</span><span class="ansi-red-fg"> </span>ket2dm<span class="ansi-blue-fg">(</span>train_set<span class="ansi-blue-fg">[</span><span class="ansi-cyan-fg">0</span><span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">.</span>ptrace<span class="ansi-blue-fg">(</span><span class="ansi-cyan-fg">1</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     16</span> <span class="ansi-red-fg">#train_dm1 = U*ket2dm(train_set[0])*U.dag()</span>
+<span class="ansi-green-intense-fg ansi-bold">     17</span> 
+
+<span class="ansi-green-fg">~/Envs/pblt/lib/python3.6/site-packages/qutip/qobj.py</span> in <span class="ansi-cyan-fg">ptrace</span><span class="ansi-blue-fg">(self, sel)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1221</span>         &#34;&#34;&#34;
+<span class="ansi-green-intense-fg ansi-bold">   1222</span>         q <span class="ansi-blue-fg">=</span> Qobj<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">-&gt; 1223</span><span class="ansi-red-fg">         </span>q<span class="ansi-blue-fg">.</span>data<span class="ansi-blue-fg">,</span> q<span class="ansi-blue-fg">.</span>dims<span class="ansi-blue-fg">,</span> _ <span class="ansi-blue-fg">=</span> _ptrace<span class="ansi-blue-fg">(</span>self<span class="ansi-blue-fg">,</span> sel<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   1224</span>         <span class="ansi-green-fg">return</span> q<span class="ansi-blue-fg">.</span>tidyup<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">if</span> settings<span class="ansi-blue-fg">.</span>auto_tidyup <span class="ansi-green-fg">else</span> q
+<span class="ansi-green-intense-fg ansi-bold">   1225</span> 
+
+<span class="ansi-green-fg">~/Envs/pblt/lib/python3.6/site-packages/qutip/cy/ptrace.pyx</span> in <span class="ansi-cyan-fg">qutip.cy.ptrace._ptrace</span><span class="ansi-blue-fg">()</span>
+
+<span class="ansi-red-fg">TypeError</span>: Invalid selection index in ptrace.</pre>
+</div>
+</div>
+
 </div>
 </div>
 
