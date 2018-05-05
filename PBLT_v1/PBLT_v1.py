@@ -70,11 +70,11 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Parameter Manipulation
 
-# In[34]:
+# In[4]:
 
 
 def init_consts(n_qubits):
-    n_gates = n * (n - 1) + 2 * n
+    n_gates = n_qubits * (n_qubits - 1) + 2 * n_qubits
     n_params = n_gates * 3
     return n_gates, n_params
 
@@ -195,7 +195,7 @@ def create_circuit_gate(n, all_params):
     return gate_prod(n, gates)
 
 
-# In[33]:
+# In[8]:
 
 
 # given input state and output state, returns estimated fidelity
@@ -587,8 +587,6 @@ for bond_length in bond_lengths:
         try:
             dset = f['hamiltonian']
             hamiltonian = dset[()]
-            #print(hamiltonian.shape)
-            #dset.read_direct(hamiltonian)
         except KeyError:
             print("subgroup `hamiltonian` not in `hamiltonians/{}` data".format(round(bond_length, 2)))
     
@@ -597,7 +595,7 @@ for bond_length in bond_lengths:
         continue
     
     # add hamiltonian to dictionary of hamiltonians
-    hamiltonians.append(Qobj(hamiltonian))
+    hamiltonians.append(Qobj(hamiltonian, dims=[[2,2,2,2],[2,2,2,2]]))
     
 hamiltonians = np.array(hamiltonians)
 
@@ -613,7 +611,7 @@ groundstatize = np.vectorize(get_groundstate)
 # In[26]:
 
 
-# create density matrix dictionary
+# compute groundstates of molecular hamiltonians to use as training and testing data
 groundenergies, groundstates = groundstatize(hamiltonians)
 
 
@@ -628,19 +626,9 @@ plt.ylim([-1.2, -0.8])
 plt.xlim([0, 2.5])
 
 
-# In[28]:
-
-
-# generate density matrices for each groundstate
-focks = []
-for i in range(len(bond_lengths)):
-    focks.append(ket2dm(groundstates[i]))
-focks = np.array(focks)
-
-
 # ### Train the Autoencoder!
 
-# In[29]:
+# In[28]:
 
 
 def train_test_split(data, train_proportion, train_is=None):
@@ -662,38 +650,64 @@ def train_test_split(data, train_proportion, train_is=None):
     return data[training_indices], data[testing_indicies]
 
 
-# In[30]:
+# In[29]:
 
 
 train_set, test_set = train_test_split(groundstates, .1, train_is=[np.argmin(groundenergies)])
 
 
-# In[31]:
+# In[30]:
 
 
 print((len(train_set), len(test_set)))
 groundstates[np.argmin(groundenergies)] == train_set[0]
 
 
-# In[53]:
+# In[44]:
 
+
+def gen_dmify():
+    return np.vectorize(ket2dm)
+
+def gen_encodify(U):
+    return np.vectorize(lambda dm: U*dm*U.dag())
+
+def gen_ptracify(sel):
+    return np.vectorize(lambda dm: dm.ptrace(sel))
+
+def gen_fidelify(tr_dm):
+    return np.vectorize(lambda dm: fidelity(dm, tr_dm))
 
 # Cost function implementation from the paper:
-n = 4
-k = 2
+def cost(params, n, k, train_set):
+    n_train = len(train_set)
+    
+    trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 
-n_gates, n_params = init_consts(n)
-n_train = len(train_set)
+    U = create_circuit_gate(n + k, params)
 
-# initialize parameters randomly on (-1, 1]
-params = init_params(n_params, lambda x: 2*np.random.rand(x)-1)
-trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
+    ptrace_sel = np.arange(n - 1, n + k - 1)
+    
+    dmify = gen_dmify()
+    encodify = gen_encodify(U)
+    ptracify = gen_ptracify(ptrace_sel)
+    fidelify = gen_fidelify(trashdm)
 
-U = create_circuit_gate(n, params)
-probs = np.ones(n_train)
-np.arange(n - 1,n + k - 1)
-ket2dm(train_set[0]).ptrace([1])
-#train_dm1 = U*ket2dm(train_set[0])*U.dag()
+    # turn each state in the training set into a density matrix
+    dms = dmify(train_set)
+    #print(len(dms))
+
+    # Apply the encode/decode transformation and get the partial trace
+    ptrace_dms = ptracify(dms)
+    #print (ptrace_dms)
+
+    # get fidelities
+    fidelities = fidelify(ptrace_dms)
+    #print (ptrace_dms[0], trashdm)
+    #print (fidelity(ptrace_dms[0], trashdm))
+    
+    # compute cost, with probability weights equal
+    return -1.0 * np.log(np.sum(fidelities) + .000000000001)
 
 # This version is broken down in terms of basis vectors and ensemble probabilities:
 #C2 = np.sum([probs[i] * fidelity((U*ket2dm(train_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_train)])
@@ -701,4 +715,29 @@ ket2dm(train_set[0]).ptrace([1])
 # # This version composes the input density matrix from the ensemble set of input states, then performs the transform:
 # inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])
 # C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
+
+
+# In[48]:
+
+
+n_gates, n_params = init_consts(4)
+
+# initialize parameters randomly on (-1, 1]
+initial_params = init_params(n_params, lambda x: 2*np.random.rand(x)-1)
+
+cost(initial_params, 2, 2, train_set)
+
+
+# In[50]:
+
+
+res = minimize(cost, initial_params, args=(2, 2, train_set), method='Nelder-Mead')
+
+
+# In[58]:
+
+
+final_params = res['x']
+cost(final_params, 2, 2, test_set)
+# something wrong, shouldn't always be the same
 
