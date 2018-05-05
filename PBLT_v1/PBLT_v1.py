@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[76]:
 
 
 import numpy as np
@@ -9,6 +9,9 @@ from qutip import *
 from scipy.optimize import minimize
 import h5py
 import matplotlib.pyplot as plt
+import sys
+import pickle
+import time
 
 
 # #### Parameters
@@ -16,6 +19,20 @@ import matplotlib.pyplot as plt
 # For n qubits, we need n(n-1) + 2n arbitary rotation gates, with 3 parameters each.
 # 
 # https://arxiv.org/abs/1612.02806
+
+# In[42]:
+
+
+# functions for pickling (saving) arbitrary objects
+# necessary because HDFsav5 cannot easily save objects such as dictionaries
+def save_obj(obj, name):
+    with open('pickle/'+ name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name):
+    with open('pickle/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+
 
 # ### QuTip Implementation
 
@@ -44,7 +61,7 @@ def gate_prod(n, gates):
 
 # #### Arbitrary Rotation Gates (single-qubit and controlled)
 
-# In[3]:
+# In[36]:
 
 
 # https://arxiv.org/abs/quant-ph/9503016
@@ -63,14 +80,21 @@ def ctrl_rot(n, params, ctrl, tgt):
     A = rz(alpha, n, tgt) * ry(theta / 2.0, n, tgt)
     B = ry(-theta / 2.0, n, tgt) * rz(-(alpha + beta) / 2.0, n, tgt)
     C = rz((beta - alpha) / 2.0, n, tgt)
-    assert (A*B*C == tenseye(n))
-    assert (A*tgtgate(n, sigmax(), tgt)*B*tgtgate(n, sigmax(), tgt)*C == rot(n, params, tgt))
+    
+    # these should ALWAYS be true, no matter the values of parameters
+    if not (A*B*C == tenseye(n)):
+        tb = sys.exc_info()[2]
+        raise RuntimeError("ABC not equal to identity").with_traceback(tb)
+    elif not (A*tgtgate(n, sigmax(), tgt)*B*tgtgate(n, sigmax(), tgt)*C == rot(n, params, tgt)):
+        tb = sys.exc_info()[2]
+        raise RuntimeError("AXBXC not equal to correct rotation gate").with_traceback(tb)
+    
     return A * cnot(n, ctrl, tgt) * B * cnot(n, ctrl, tgt) * C
 
 
 # #### Parameter Manipulation
 
-# In[4]:
+# In[127]:
 
 
 def init_consts(n_qubits):
@@ -81,10 +105,10 @@ def init_consts(n_qubits):
 def init_params(n_params, init_method=np.ones):
     return init_method(n_params)
 
-def split_params(n, params):
-    return (params[:3*n].reshape(n, 3),
-            params[3*n:-3*n].reshape(n, n-1, 3),
-            params[-3*n:].reshape(n, 3))
+def split_params(n_qs, params):
+    return (params[:3*n_qs].reshape(n_qs, 3),
+            params[3*n_qs:-3*n_qs].reshape(n_qs, n_qs-1, 3),
+            params[-3*n_qs:].reshape(n_qs, 3))
 
 def recombine_params(first, mid, last):
     return np.concatenate((first.flatten(), mid.flatten(), last.flatten()))
@@ -155,10 +179,11 @@ def recombine_params(first, mid, last):
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
-def wrapper_gate(n, params):
-    assert (len(params) == n)
+def wrapper_gate(n, param_sets):
+    if len(param_sets) != n:
+        raise ValueError, 'number of sets of params should correspond to number of gates'
     gates = []
-    for tgt, rot_params in enumerate(params):
+    for tgt, rot_params in enumerate(param_sets):
         gates.append(rot(n, rot_params, tgt))
     return gate_prod(n, gates)
 
@@ -198,63 +223,65 @@ def create_circuit_gate(n, all_params):
 # In[8]:
 
 
-# given input state and output state, returns estimated fidelity
-#     we can cast to integer because this is the norm squared
-#     there's no longer any complex component
-def overlap(inp, oup):
-    ol = inp.overlap(oup)
-    return int(ol * ol.conj())
-v_overlap = np.vectorize(overlap)
+# # given input state and output state, returns estimated fidelity
+# #     we can cast to integer because this is the norm squared
+# #     there's no longer any complex component
+# def overlap(inp, oup):
+#     ol = inp.overlap(oup)
+#     return int(ol * ol.conj())
+# v_overlap = np.vectorize(overlap)
 
-# return objective to minimize for scipy optimizers
-#     given N data points
-#     params: parameters to tune
-#     args: [n, ...bunch_of_instates_to_train_on...]
-def obj_func(params, *args):
-    n = args[0]
-    in_states = args[1:]
+# # return objective to minimize for scipy optimizers
+# #     given N data points
+# #     params: parameters to tune
+# #     args: [n, ...bunch_of_instates_to_train_on...]
+# def obj_func(params, *args):
+#     n = args[0]
+#     in_states = args[1:]
     
-    # create encoding operator from parameters of the rotation gates
-    encoding_op = create_circuit_gate(n, params)
+#     # create encoding operator from parameters of the rotation gates
+#     encoding_op = create_circuit_gate(n, params)
     
-    # apply encoding circuit to all training data
-    # (should probably split this up into epochs)
-    out_states = encoding_op * in_states
+#     # apply encoding circuit to all training data
+#     # (should probably split this up into epochs)
+#     out_states = encoding_op * in_states
     
-    overlaps = 1 - v_overlap(in_states, out_states)
-    return sum(overlaps)
+#     overlaps = 1 - v_overlap(in_states, out_states)
+#     return sum(overlaps)
 
 
 # In[9]:
 
 
-# create qubit from a rand float
-def qubit(a, b):    
-    # random phase shifts
-    if np.random.rand() <= 0.5:
-        a = a * 1.0j
-    if np.random.rand() <= 0.5:
-        b = b * 1.0j
-    return Qobj([[a],[b]]).unit()
-v_qubit = np.vectorize(qubit)
+# # create qubit from a rand float
+# def qubit(a, b):    
+#     # random phase shifts
+#     if np.random.rand() <= 0.5:
+#         a = a * 1.0j
+#     if np.random.rand() <= 0.5:
+#         b = b * 1.0j
+#     return Qobj([[a],[b]]).unit()
+# v_qubit = np.vectorize(qubit)
 
-def gen_data(n_orig, n_enc, data_count=100):
-    assert(n_orig >= n_enc)
-    data = []
+# def gen_data(n_orig, n_enc, data_count=100):
+#     if n_orig < n_enc:
+#         raise ValueError, ""
+#     assert(n_orig >= n_enc)
+#     data = []
     
-    # choose which qubits to exclude
-    excluded = np.random.choice(range(n_orig), size=(n_orig - n_enc), replace=False)
+#     # choose which qubits to exclude
+#     excluded = np.random.choice(range(n_orig), size=(n_orig - n_enc), replace=False)
     
-    # set shape matrix
-    shape = [2]*n_orig
+#     # set shape matrix
+#     shape = [2]*n_orig
     
-    # generate data
-    for _ in range(data_count):
-        qubits = v_qubit(2 * np.random.random(n_orig) - 1, 2 * np.random.random(n_orig) - 1)
-        qubits[excluded] = basis(2,0)
-        data.append((tensor(qubits)).unit())
+#     # generate data
+#     for _ in range(data_count):
+#         qubits = v_qubit(2 * np.random.random(n_orig) - 1, 2 * np.random.random(n_orig) - 1)
+#         qubits[excluded] = basis(2,0)
+#         data.append((tensor(qubits)).unit())
         
-    return np.array(data)
+#     return np.array(data)
 
 
 # In[10]:
@@ -663,7 +690,7 @@ print((len(train_set), len(test_set)))
 groundstates[np.argmin(groundenergies)] == train_set[0]
 
 
-# In[44]:
+# In[179]:
 
 
 def gen_dmify():
@@ -679,23 +706,21 @@ def gen_fidelify(tr_dm):
     return np.vectorize(lambda dm: fidelity(dm, tr_dm))
 
 # Cost function implementation from the paper:
-def cost(params, n, k, train_set):
-    n_train = len(train_set)
+def cost(params, psi_set, n, k, sel, debug=False):
+    n_states = len(psi_set)
     
     trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 
     U = create_circuit_gate(n + k, params)
-
-    ptrace_sel = np.arange(n - 1, n + k - 1)
     
     dmify = gen_dmify()
     encodify = gen_encodify(U)
-    ptracify = gen_ptracify(ptrace_sel)
+    ptracify = gen_ptracify(sel)
     fidelify = gen_fidelify(trashdm)
 
     # turn each state in the training set into a density matrix
-    dms = dmify(train_set)
-    #print(len(dms))
+    dms = dmify(psi_set)
+    #print(n_states, len(dms))
 
     # Apply the encode/decode transformation and get the partial trace
     ptrace_dms = ptracify(dms)
@@ -706,38 +731,107 @@ def cost(params, n, k, train_set):
     #print (ptrace_dms[0], trashdm)
     #print (fidelity(ptrace_dms[0], trashdm))
     
+    if debug:
+        print("parameters:", params)
+        print("compression dimension ; trash dimension:", n, ";", k)
+        print("partial trace (trash) qubits:", sel)
+        print("number of input states:", n_states)
+        print("encoding gate:", U)
+        print("fidelities:", fidelities)
+        print("cost", -1.0 * np.log(np.sum(fidelities) + .000000000001))
+    
     # compute cost, with probability weights equal
-    return -1.0 * np.log(np.sum(fidelities) + .000000000001)
+    #print (fidelities)
+    return -1.0 * np.sum(fidelities)
 
 # This version is broken down in terms of basis vectors and ensemble probabilities:
-#C2 = np.sum([probs[i] * fidelity((U*ket2dm(train_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_train)])
+#C2 = np.sum([probs[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_states)])
 
 # # This version composes the input density matrix from the ensemble set of input states, then performs the transform:
 # inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])
 # C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 
 
-# In[48]:
+# In[141]:
+
+
+def find_sel(initial_sel, initial_params, psi_set, n, k, cap=100):
+    '''
+    Find a selection of qubits to consider the "trash"
+    - returns best selection found and number of qubits in that selection
+    '''
+    if len(initial_sel) != k:
+        raise ValueError("k must be equal to length of selection")
+        
+    possible = np.arange(n)
+    
+    best_sel = initial_sel
+    best_c = cost(initial_params, psi_set, n, k, initial_sel)
+    
+    iters = 0
+    while iters < cap:
+        sel = np.random.choice(possible, k, replace=False)
+        
+        if not (len(sel) == k):
+            raise RuntimeError
+        
+        c = cost(initial_params, psi_set, n, k, sel)
+        
+        if c <= best_c:
+            best_sel = sel
+            best_c = c
+            
+        iters += 1
+        
+    return best_sel, best_c
+
+
+# In[178]:
+
+
+# calculate average fidelity over set of input states
+# def avg_fid(c, num_states):
+#     return (np.exp(-1.0*c) - .000000000001) / num_states
+def avg_fid(c, num_states):
+    return c / num_states
+
+
+# In[180]:
 
 
 n_gates, n_params = init_consts(4)
 
-# initialize parameters randomly on (-1, 1]
+# initialize parameters
 initial_params = init_params(n_params, lambda x: 2*np.random.rand(x)-1)
-
-cost(initial_params, 2, 2, train_set)
-
-
-# In[50]:
+sel, _ = find_sel([0,1], initial_params, train_set, 2, 2)
 
 
-res = minimize(cost, initial_params, args=(2, 2, train_set), method='Nelder-Mead')
+# In[181]:
 
 
-# In[58]:
+len(train_set), cost(initial_params, train_set, 2, 2, sel)
 
 
+# In[ ]:
+
+
+method = 'Nelder-Mead'
+res = minimize(cost, initial_params, args=(train_set, 2, 2, sel, False), method=method)
 final_params = res['x']
-cost(final_params, 2, 2, test_set)
-# something wrong, shouldn't always be the same
+# save results for later analysis
+save_obj(res, '{}.{}-{}-{}.{}'.format(method, n, k, sel, np.round(time.time())))
+
+
+# In[ ]:
+
+
+# test results on test set of data
+final_c = cost(final_params, test_set, 2, 2, sel, debug=False)
+print(avg_fid(final_c, len(test_set)))
+
+
+# In[ ]:
+
+
+res
 

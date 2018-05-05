@@ -11773,7 +11773,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[76]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -11781,28 +11781,12 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">minimize</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">time</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/jwbaskerv/Envs/pblt/lib/python3.6/site-packages/h5py/__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
-  from ._conv import register_converters as _register_converters
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -11816,6 +11800,27 @@ div#notebook {
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># functions for pickling (saving) arbitrary objects</span>
+<span class="c1"># necessary because HDFsav5 cannot easily save objects such as dictionaries</span>
+<span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pickle/&#39;</span><span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load_obj</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pickle/&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -11871,7 +11876,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># https://arxiv.org/abs/quant-ph/9503016</span>
@@ -11890,8 +11895,15 @@ div#notebook {
     <span class="n">A</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">ry</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
     <span class="n">B</span> <span class="o">=</span> <span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">rz</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">rz</span><span class="p">((</span><span class="n">beta</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">tenseye</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
+    
+    <span class="c1"># these should ALWAYS be true, no matter the values of parameters</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">tenseye</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+        <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ABC not equal to identity&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">tgtgate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">sigmax</span><span class="p">(),</span> <span class="n">tgt</span><span class="p">)</span><span class="o">*</span><span class="n">C</span> <span class="o">==</span> <span class="n">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)):</span>
+        <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;AXBXC not equal to correct rotation gate&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+    
     <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">cnot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">cnot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ctrl</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span>
 </pre></div>
 
@@ -11910,7 +11922,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[127]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">init_consts</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
@@ -11921,10 +11933,10 @@ div#notebook {
 <span class="k">def</span> <span class="nf">init_params</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="n">init_method</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">init_method</span><span class="p">(</span><span class="n">n_params</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">split_params</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-            <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-            <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">split_params</span><span class="p">(</span><span class="n">n_qs</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="mi">3</span><span class="o">*</span><span class="n">n_qs</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_qs</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="n">n_qs</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n_qs</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_qs</span><span class="p">,</span> <span class="n">n_qs</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">n_qs</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_qs</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">recombine_params</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">first</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">mid</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">last</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
@@ -12028,10 +12040,11 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The n rotation gates (one on each qubit) that happen at the start and end.</span>
-<span class="k">def</span> <span class="nf">wrapper_gate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">wrapper_gate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">param_sets</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_sets</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s1">&#39;number of sets of params should correspond to number of gates&#39;</span>
     <span class="n">gates</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">rot_params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">rot_params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_sets</span><span class="p">):</span>
         <span class="n">gates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rot</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rot_params</span><span class="p">,</span> <span class="n">tgt</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">gate_prod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">gates</span><span class="p">)</span>
 
@@ -12078,31 +12091,31 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># given input state and output state, returns estimated fidelity</span>
-<span class="c1">#     we can cast to integer because this is the norm squared</span>
-<span class="c1">#     there&#39;s no longer any complex component</span>
-<span class="k">def</span> <span class="nf">overlap</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">oup</span><span class="p">):</span>
-    <span class="n">ol</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">overlap</span><span class="p">(</span><span class="n">oup</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">ol</span> <span class="o">*</span> <span class="n">ol</span><span class="o">.</span><span class="n">conj</span><span class="p">())</span>
-<span class="n">v_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">overlap</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># # given input state and output state, returns estimated fidelity</span>
+<span class="c1"># #     we can cast to integer because this is the norm squared</span>
+<span class="c1"># #     there&#39;s no longer any complex component</span>
+<span class="c1"># def overlap(inp, oup):</span>
+<span class="c1">#     ol = inp.overlap(oup)</span>
+<span class="c1">#     return int(ol * ol.conj())</span>
+<span class="c1"># v_overlap = np.vectorize(overlap)</span>
 
-<span class="c1"># return objective to minimize for scipy optimizers</span>
-<span class="c1">#     given N data points</span>
-<span class="c1">#     params: parameters to tune</span>
-<span class="c1">#     args: [n, ...bunch_of_instates_to_train_on...]</span>
-<span class="k">def</span> <span class="nf">obj_func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">in_states</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="c1"># # return objective to minimize for scipy optimizers</span>
+<span class="c1"># #     given N data points</span>
+<span class="c1"># #     params: parameters to tune</span>
+<span class="c1"># #     args: [n, ...bunch_of_instates_to_train_on...]</span>
+<span class="c1"># def obj_func(params, *args):</span>
+<span class="c1">#     n = args[0]</span>
+<span class="c1">#     in_states = args[1:]</span>
     
-    <span class="c1"># create encoding operator from parameters of the rotation gates</span>
-    <span class="n">encoding_op</span> <span class="o">=</span> <span class="n">create_circuit_gate</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<span class="c1">#     # create encoding operator from parameters of the rotation gates</span>
+<span class="c1">#     encoding_op = create_circuit_gate(n, params)</span>
     
-    <span class="c1"># apply encoding circuit to all training data</span>
-    <span class="c1"># (should probably split this up into epochs)</span>
-    <span class="n">out_states</span> <span class="o">=</span> <span class="n">encoding_op</span> <span class="o">*</span> <span class="n">in_states</span>
+<span class="c1">#     # apply encoding circuit to all training data</span>
+<span class="c1">#     # (should probably split this up into epochs)</span>
+<span class="c1">#     out_states = encoding_op * in_states</span>
     
-    <span class="n">overlaps</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">v_overlap</span><span class="p">(</span><span class="n">in_states</span><span class="p">,</span> <span class="n">out_states</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">overlaps</span><span class="p">)</span>
+<span class="c1">#     overlaps = 1 - v_overlap(in_states, out_states)</span>
+<span class="c1">#     return sum(overlaps)</span>
 </pre></div>
 
 </div>
@@ -12115,33 +12128,35 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create qubit from a rand float</span>
-<span class="k">def</span> <span class="nf">qubit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>    
-    <span class="c1"># random phase shifts</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mf">1.0</span><span class="n">j</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="mf">1.0</span><span class="n">j</span>
-    <span class="k">return</span> <span class="n">Qobj</span><span class="p">([[</span><span class="n">a</span><span class="p">],[</span><span class="n">b</span><span class="p">]])</span><span class="o">.</span><span class="n">unit</span><span class="p">()</span>
-<span class="n">v_qubit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># # create qubit from a rand float</span>
+<span class="c1"># def qubit(a, b):    </span>
+<span class="c1">#     # random phase shifts</span>
+<span class="c1">#     if np.random.rand() &lt;= 0.5:</span>
+<span class="c1">#         a = a * 1.0j</span>
+<span class="c1">#     if np.random.rand() &lt;= 0.5:</span>
+<span class="c1">#         b = b * 1.0j</span>
+<span class="c1">#     return Qobj([[a],[b]]).unit()</span>
+<span class="c1"># v_qubit = np.vectorize(qubit)</span>
 
-<span class="k">def</span> <span class="nf">gen_data</span><span class="p">(</span><span class="n">n_orig</span><span class="p">,</span> <span class="n">n_enc</span><span class="p">,</span> <span class="n">data_count</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">n_orig</span> <span class="o">&gt;=</span> <span class="n">n_enc</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># def gen_data(n_orig, n_enc, data_count=100):</span>
+<span class="c1">#     if n_orig &lt; n_enc:</span>
+<span class="c1">#         raise ValueError, &quot;&quot;</span>
+<span class="c1">#     assert(n_orig &gt;= n_enc)</span>
+<span class="c1">#     data = []</span>
     
-    <span class="c1"># choose which qubits to exclude</span>
-    <span class="n">excluded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_orig</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_orig</span> <span class="o">-</span> <span class="n">n_enc</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1">#     # choose which qubits to exclude</span>
+<span class="c1">#     excluded = np.random.choice(range(n_orig), size=(n_orig - n_enc), replace=False)</span>
     
-    <span class="c1"># set shape matrix</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">n_orig</span>
+<span class="c1">#     # set shape matrix</span>
+<span class="c1">#     shape = [2]*n_orig</span>
     
-    <span class="c1"># generate data</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_count</span><span class="p">):</span>
-        <span class="n">qubits</span> <span class="o">=</span> <span class="n">v_qubit</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n_orig</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">n_orig</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">qubits</span><span class="p">[</span><span class="n">excluded</span><span class="p">]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tensor</span><span class="p">(</span><span class="n">qubits</span><span class="p">))</span><span class="o">.</span><span class="n">unit</span><span class="p">())</span>
+<span class="c1">#     # generate data</span>
+<span class="c1">#     for _ in range(data_count):</span>
+<span class="c1">#         qubits = v_qubit(2 * np.random.random(n_orig) - 1, 2 * np.random.random(n_orig) - 1)</span>
+<span class="c1">#         qubits[excluded] = basis(2,0)</span>
+<span class="c1">#         data.append((tensor(qubits)).unit())</span>
         
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="c1">#     return np.array(data)</span>
 </pre></div>
 
 </div>
@@ -12997,7 +13012,7 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[179]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">gen_dmify</span><span class="p">():</span>
@@ -13013,23 +13028,21 @@ Qobj data =
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">dm</span><span class="p">:</span> <span class="n">fidelity</span><span class="p">(</span><span class="n">dm</span><span class="p">,</span> <span class="n">tr_dm</span><span class="p">))</span>
 
 <span class="c1"># Cost function implementation from the paper:</span>
-<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">train_set</span><span class="p">):</span>
-    <span class="n">n_train</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">psi_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">n_states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">psi_set</span><span class="p">)</span>
     
     <span class="n">trashdm</span> <span class="o">=</span> <span class="n">ket2dm</span><span class="p">(</span><span class="n">tensor</span><span class="p">([</span><span class="n">basis</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]))</span>
 
     <span class="n">U</span> <span class="o">=</span> <span class="n">create_circuit_gate</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-
-    <span class="n">ptrace_sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     
     <span class="n">dmify</span> <span class="o">=</span> <span class="n">gen_dmify</span><span class="p">()</span>
     <span class="n">encodify</span> <span class="o">=</span> <span class="n">gen_encodify</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
-    <span class="n">ptracify</span> <span class="o">=</span> <span class="n">gen_ptracify</span><span class="p">(</span><span class="n">ptrace_sel</span><span class="p">)</span>
+    <span class="n">ptracify</span> <span class="o">=</span> <span class="n">gen_ptracify</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span>
     <span class="n">fidelify</span> <span class="o">=</span> <span class="n">gen_fidelify</span><span class="p">(</span><span class="n">trashdm</span><span class="p">)</span>
 
     <span class="c1"># turn each state in the training set into a density matrix</span>
-    <span class="n">dms</span> <span class="o">=</span> <span class="n">dmify</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
-    <span class="c1">#print(len(dms))</span>
+    <span class="n">dms</span> <span class="o">=</span> <span class="n">dmify</span><span class="p">(</span><span class="n">psi_set</span><span class="p">)</span>
+    <span class="c1">#print(n_states, len(dms))</span>
 
     <span class="c1"># Apply the encode/decode transformation and get the partial trace</span>
     <span class="n">ptrace_dms</span> <span class="o">=</span> <span class="n">ptracify</span><span class="p">(</span><span class="n">dms</span><span class="p">)</span>
@@ -13040,11 +13053,21 @@ Qobj data =
     <span class="c1">#print (ptrace_dms[0], trashdm)</span>
     <span class="c1">#print (fidelity(ptrace_dms[0], trashdm))</span>
     
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;parameters:&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;compression dimension ; trash dimension:&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;partial trace (trash) qubits:&quot;</span><span class="p">,</span> <span class="n">sel</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of input states:&quot;</span><span class="p">,</span> <span class="n">n_states</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;encoding gate:&quot;</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fidelities:&quot;</span><span class="p">,</span> <span class="n">fidelities</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fidelities</span><span class="p">)</span> <span class="o">+</span> <span class="o">.</span><span class="mi">000000000001</span><span class="p">))</span>
+    
     <span class="c1"># compute cost, with probability weights equal</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fidelities</span><span class="p">)</span> <span class="o">+</span> <span class="o">.</span><span class="mi">000000000001</span><span class="p">)</span>
+    <span class="c1">#print (fidelities)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fidelities</span><span class="p">)</span>
 
 <span class="c1"># This version is broken down in terms of basis vectors and ensemble probabilities:</span>
-<span class="c1">#C2 = np.sum([probs[i] * fidelity((U*ket2dm(train_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_train)])</span>
+<span class="c1">#C2 = np.sum([probs[i] * fidelity((U*ket2dm(psi_set[i])*U.dag()).ptrace(np.arange(n,n+k)), trashdm) for i in range(n_states)])</span>
 
 <span class="c1"># # This version composes the input density matrix from the ensemble set of input states, then performs the transform:</span>
 <span class="c1"># inputdm = np.sum([p_set[i] * ket2dm(psi_set[i]) for i in range(len(psi_set))])</span>
@@ -13058,15 +13081,85 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[141]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_sel</span><span class="p">(</span><span class="n">initial_sel</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">psi_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">cap</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Find a selection of qubits to consider the &quot;trash&quot;</span>
+<span class="sd">    - returns best selection found and number of qubits in that selection</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">initial_sel</span><span class="p">)</span> <span class="o">!=</span> <span class="n">k</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;k must be equal to length of selection&quot;</span><span class="p">)</span>
+        
+    <span class="n">possible</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    
+    <span class="n">best_sel</span> <span class="o">=</span> <span class="n">initial_sel</span>
+    <span class="n">best_c</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">initial_params</span><span class="p">,</span> <span class="n">psi_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">initial_sel</span><span class="p">)</span>
+    
+    <span class="n">iters</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">iters</span> <span class="o">&lt;</span> <span class="n">cap</span><span class="p">:</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">possible</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span>
+        
+        <span class="n">c</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">initial_params</span><span class="p">,</span> <span class="n">psi_set</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">sel</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">best_c</span><span class="p">:</span>
+            <span class="n">best_sel</span> <span class="o">=</span> <span class="n">sel</span>
+            <span class="n">best_c</span> <span class="o">=</span> <span class="n">c</span>
+            
+        <span class="n">iters</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+    <span class="k">return</span> <span class="n">best_sel</span><span class="p">,</span> <span class="n">best_c</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[178]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># calculate average fidelity over set of input states</span>
+<span class="c1"># def avg_fid(c, num_states):</span>
+<span class="c1">#     return (np.exp(-1.0*c) - .000000000001) / num_states</span>
+<span class="k">def</span> <span class="nf">avg_fid</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">num_states</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">c</span> <span class="o">/</span> <span class="n">num_states</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[180]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_gates</span><span class="p">,</span> <span class="n">n_params</span> <span class="o">=</span> <span class="n">init_consts</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 
-<span class="c1"># initialize parameters randomly on (-1, 1]</span>
+<span class="c1"># initialize parameters</span>
 <span class="n">initial_params</span> <span class="o">=</span> <span class="n">init_params</span><span class="p">(</span><span class="n">n_params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sel</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_sel</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">train_set</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
 
-<span class="n">cost</span><span class="p">(</span><span class="n">initial_params</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">train_set</span><span class="p">)</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[181]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">train_set</span><span class="p">),</span> <span class="n">cost</span><span class="p">(</span><span class="n">initial_params</span><span class="p">,</span> <span class="n">train_set</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sel</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13079,13 +13172,13 @@ Qobj data =
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[48]:</div>
+<div class="prompt output_prompt">Out[181]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>27.631021115928547</pre>
+<pre>(5, -1.1988013212244542)</pre>
 </div>
 
 </div>
@@ -13096,10 +13189,14 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">train_set</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+<span class="n">final_params</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+<span class="c1"># save results for later analysis</span>
+<span class="n">save_obj</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())))</span>
 </pre></div>
 
 </div>
@@ -13109,35 +13206,28 @@ Qobj data =
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_params</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-<span class="n">cost</span><span class="p">(</span><span class="n">final_params</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">test_set</span><span class="p">)</span>
-<span class="c1"># something wrong, shouldn&#39;t always be the same</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># test results on test set of data</span>
+<span class="n">final_c</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">final_params</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sel</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">avg_fid</span><span class="p">(</span><span class="n">final_c</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_set</span><span class="p">)))</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[58]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>27.631021115928547</pre>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span>
+</pre></div>
 
 </div>
-
 </div>
 </div>
 
