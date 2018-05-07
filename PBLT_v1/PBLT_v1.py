@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[76]:
+# In[10]:
 
 
 import numpy as np
@@ -20,7 +20,7 @@ import time
 # 
 # https://arxiv.org/abs/1612.02806
 
-# In[42]:
+# In[11]:
 
 
 # functions for pickling (saving) arbitrary objects
@@ -38,7 +38,7 @@ def load_obj(name):
 
 # #### QuTip Helper Functions
 
-# In[2]:
+# In[12]:
 
 
 # apply given single-qubit gate to any qubit in system of n qubits
@@ -61,7 +61,7 @@ def gate_prod(n, gates):
 
 # #### Arbitrary Rotation Gates (single-qubit and controlled)
 
-# In[36]:
+# In[13]:
 
 
 # https://arxiv.org/abs/quant-ph/9503016
@@ -94,7 +94,7 @@ def ctrl_rot(n, params, ctrl, tgt):
 
 # #### Parameter Manipulation
 
-# In[127]:
+# In[14]:
 
 
 def init_consts(n_qubits):
@@ -118,7 +118,7 @@ def recombine_params(first, mid, last):
 # The circuit outlined in red below is the unitary gate for encoding (in this case, for 4 qubit inputs).
 # ![arbitrary_rotation_gate_circuit](https://image.ibb.co/ji9XBc/unit_cell_arb_rot.png)
 
-# In[5]:
+# In[15]:
 
 
 # # create circuit from parameters
@@ -166,7 +166,7 @@ def recombine_params(first, mid, last):
 #     return gates
 
 
-# In[6]:
+# In[16]:
 
 
 # gate_product = gate_prod(n, gates)
@@ -175,13 +175,13 @@ def recombine_params(first, mid, last):
 
 # #### Circuit Implementation
 
-# In[7]:
+# In[17]:
 
 
 # The n rotation gates (one on each qubit) that happen at the start and end.
 def wrapper_gate(n, param_sets):
     if len(param_sets) != n:
-        raise ValueError, 'number of sets of params should correspond to number of gates'
+        raise ValueError('number of sets of params should correspond to number of gates')
     gates = []
     for tgt, rot_params in enumerate(param_sets):
         gates.append(rot(n, rot_params, tgt))
@@ -220,7 +220,7 @@ def create_circuit_gate(n, all_params):
     return gate_prod(n, gates)
 
 
-# In[8]:
+# In[18]:
 
 
 # # given input state and output state, returns estimated fidelity
@@ -250,7 +250,7 @@ def create_circuit_gate(n, all_params):
 #     return sum(overlaps)
 
 
-# In[9]:
+# In[19]:
 
 
 # # create qubit from a rand float
@@ -284,7 +284,7 @@ def create_circuit_gate(n, all_params):
 #     return np.array(data)
 
 
-# In[10]:
+# In[20]:
 
 
 # data = gen_data(2,1,data_count=1000)
@@ -293,7 +293,7 @@ def create_circuit_gate(n, all_params):
 # # minimize(obj_func, initial_params, method='Nelder-Mead')
 
 
-# In[11]:
+# In[21]:
 
 
 # U = sigmax()
@@ -330,7 +330,7 @@ def create_circuit_gate(n, all_params):
 # 
 # As an example, we construct the density matrix for basis states:
 
-# In[12]:
+# In[22]:
 
 
 # Basis state 0 
@@ -341,14 +341,14 @@ rho = q0*q0.dag()
 rho
 
 
-# In[13]:
+# In[23]:
 
 
 # note the following function also works
 ket2dm(q0)
 
 
-# In[14]:
+# In[24]:
 
 
 # For basis state 1
@@ -359,7 +359,7 @@ ket2dm(q1)
 
 # These pure, orthogonal basis states are equivalent to fock (photon number) states, and qutip has a built in function:
 
-# In[15]:
+# In[25]:
 
 
 fock_dm(2,1)
@@ -367,7 +367,7 @@ fock_dm(2,1)
 
 # Nice! We can simply read the probability of the system being in state zero or one by looking at the diagonal entries. What happens for a superpostion?
 
-# In[16]:
+# In[26]:
 
 
 # equal superposition state
@@ -380,7 +380,7 @@ ket2dm(q)
 # 
 # The most important property is that for a pure state, the trace (sum of diagonals) of the density matrix is 1. This is related exactly to the normalized nature of a pure state.
 
-# In[17]:
+# In[27]:
 
 
 ket2dm(q).tr()
@@ -396,7 +396,7 @@ ket2dm(q).tr()
 # 
 # $\rho = \sum\limits_{i}{p_i|\psi_i><\psi_i|}$
 
-# In[18]:
+# In[28]:
 
 
 q = 1/2*basis(2,0) + 1/2*basis(2,1)
@@ -414,7 +414,7 @@ ket2dm(q)
 # 
 # $\text{Tr}[\rho_{max}] = 1/D$ where $D$ is the dimensionality of the system. In the case of qubits D = 2.
 
-# In[19]:
+# In[29]:
 
 
 ket2dm(q).tr()
@@ -466,7 +466,7 @@ ket2dm(q).tr()
 # Qutip Fidelity Function: http://qutip.org/docs/3.1.0/apidoc/functions.html
 # * Search fidelity - computes the fidelity of two density matrices
 
-# In[20]:
+# In[30]:
 
 
 # Cost Function Testing:
@@ -487,7 +487,7 @@ print(1/2*ket2dm(psi[0])+1/2*ket2dm(psi[1]))
 print(ket2dm(1/2*psi[0]+1/2*psi[1]))
 
 
-# In[21]:
+# In[31]:
 
 
 # Cost function implementation from the paper:
@@ -531,7 +531,7 @@ trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 # 
 # The Hamiltonian is implemented in qutip below: 
 
-# In[22]:
+# In[32]:
 
 
 # # Reproducing the test set based on the STO-6G minimum basis set of hydrogen
@@ -582,7 +582,7 @@ trashdm = ket2dm(tensor([basis(2,0) for _ in range(k)]))
 # 
 # each bond-length has a hamiltonian stored at `hamiltonians/sto-3g.<bond-length>.hdf5`
 
-# In[23]:
+# In[33]:
 
 
 # get the list of bond lengths for which we precomputed hamiltonians
@@ -600,7 +600,7 @@ else:
     bond_lengths = np.round(bond_lengths, 2)
 
 
-# In[24]:
+# In[34]:
 
 
 # list of hamiltonians
@@ -627,7 +627,7 @@ for bond_length in bond_lengths:
 hamiltonians = np.array(hamiltonians)
 
 
-# In[25]:
+# In[35]:
 
 
 def get_groundstate(hamiltonian):
@@ -635,14 +635,14 @@ def get_groundstate(hamiltonian):
 groundstatize = np.vectorize(get_groundstate)
 
 
-# In[26]:
+# In[36]:
 
 
 # compute groundstates of molecular hamiltonians to use as training and testing data
 groundenergies, groundstates = groundstatize(hamiltonians)
 
 
-# In[27]:
+# In[37]:
 
 
 # plot hydrogen atom bond-length vs. ground-state energies
@@ -655,7 +655,7 @@ plt.xlim([0, 2.5])
 
 # ### Train the Autoencoder!
 
-# In[28]:
+# In[38]:
 
 
 def train_test_split(data, train_proportion, train_is=None):
@@ -677,20 +677,20 @@ def train_test_split(data, train_proportion, train_is=None):
     return data[training_indices], data[testing_indicies]
 
 
-# In[29]:
+# In[39]:
 
 
 train_set, test_set = train_test_split(groundstates, .1, train_is=[np.argmin(groundenergies)])
 
 
-# In[30]:
+# In[40]:
 
 
 print((len(train_set), len(test_set)))
 groundstates[np.argmin(groundenergies)] == train_set[0]
 
 
-# In[179]:
+# In[41]:
 
 
 def gen_dmify():
@@ -752,7 +752,7 @@ def cost(params, psi_set, n, k, sel, debug=False):
 # C2 = fidelity((U*inputdm*U.dag()).ptrace(np.arange(n,n+k)),trashdm)
 
 
-# In[141]:
+# In[42]:
 
 
 def find_sel(initial_sel, initial_params, psi_set, n, k, cap=100):
@@ -786,7 +786,7 @@ def find_sel(initial_sel, initial_params, psi_set, n, k, cap=100):
     return best_sel, best_c
 
 
-# In[178]:
+# In[43]:
 
 
 # calculate average fidelity over set of input states
@@ -796,7 +796,7 @@ def avg_fid(c, num_states):
     return c / num_states
 
 
-# In[180]:
+# In[44]:
 
 
 n_gates, n_params = init_consts(4)
@@ -806,7 +806,7 @@ initial_params = init_params(n_params, lambda x: 2*np.random.rand(x)-1)
 sel, _ = find_sel([0,1], initial_params, train_set, 2, 2)
 
 
-# In[181]:
+# In[ ]:
 
 
 len(train_set), cost(initial_params, train_set, 2, 2, sel)
