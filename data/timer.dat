@@ -1,0 +1,113 @@
+
+Host: Jamess-MacBook-Pro-100.local
+
+Timers On : Thu Apr 19 19:31:30 2018
+Timers Off: Thu Apr 19 19:31:31 2018
+
+Wall Time:        1.00 seconds
+
+
+***********************************************************
+
+Host: Jamess-MacBook-Pro-100.local
+
+Timers On : Thu Apr 19 19:31:34 2018
+Timers Off: Thu Apr 19 19:32:38 2018
+
+Wall Time:       64.00 seconds
+
+Total PK formation time:       5.32u       0.17s   3.308322w     26 calls
+HF: Form H  :       0.00u       0.15s   0.194931w     69 calls
+HF: Form S/X:       0.02u       0.02s   0.022949w     69 calls
+HF: Guess   :       3.27u       0.03s   2.011541w     69 calls
+SAD Guess   :       3.20u       0.03s   1.946961w     22 calls
+JK: (A|mn)  :       6.07u       0.00s   3.623471w     75 calls
+JK: (A|Q)^-1/2:       3.15u       0.07s   1.864922w     75 calls
+JK: (Q|mn)  :       1.08u       0.03s   0.127694w     75 calls
+JK: D       :       0.00u       0.02s   0.015091w    979 calls
+JK: USO2AO  :       0.12u       0.03s   0.051872w    850 calls
+JK: JK      :      22.32u       1.20s      13.35w    979 calls
+JK: J       :       0.73u       0.05s   0.214133w    536 calls
+JK: J1      :       0.35u       0.02s   0.114155w    923 calls
+JK: J2      :       0.37u       0.03s   0.090370w    923 calls
+JK: K       :       6.93u       0.83s   4.083566w    536 calls
+JK: K1      :       6.10u       0.83s   3.548150w    867 calls
+JK: K2      :       0.82u       0.00s   0.531532w    867 calls
+JK: AO2USO  :       0.18u       0.00s   0.104380w    850 calls
+DIISManager::add_entry:       0.07u       0.17s   0.113598w    908 calls
+DIISManager::extrapolate:       0.03u       0.02s   0.075829w    839 calls
+DIISManager::extrapolate: bMatrix setup:       0.03u       0.00s   0.029425w    839 calls
+DIISManager::extrapolate: bMatrix pseudoinverse:       0.00u       0.00s   0.017410w    839 calls
+DIISManager::extrapolate: form new data:       0.00u       0.02s   0.024675w    839 calls
+HF: Form G  :      25.08u       1.37s      15.01w    729 calls
+PK computes JK:       1.23u       0.00s   0.721542w    272 calls
+HF: Form F  :       0.07u       0.00s   0.031067w    729 calls
+HF: DIIS    :       0.18u       0.18s   0.237939w    729 calls
+HF: Form C  :       0.53u       0.02s   0.282388w    729 calls
+HF: Form D  :       0.00u       0.02s   0.015415w    729 calls
+Grad: T     :       0.00u       0.00s 0.00001600w      1 call
+Grad: V     :       0.00u       0.00s 0.00218500w      1 call
+Grad: S     :       0.00u       0.00s 0.00001500w      1 call
+Grad: JK    :       0.07u       0.00s 0.05532500w      1 call
+JKGrad: Amn :       0.02u       0.00s 0.00734600w      1 call
+JKGrad: Awmn:       0.00u       0.00s 0.00000300w      1 call
+JKGrad: AB  :       0.02u       0.00s 0.01191000w      1 call
+JKGrad: UV  :       0.00u       0.00s 0.00006000w      1 call
+JKGrad: ABx :       0.02u       0.00s 0.01774800w      1 call
+JKGrad: Amnx:       0.02u       0.00s 0.01083600w      1 call
+JKGrad: Awmnx:       0.00u       0.00s 0.00000400w      1 call
+Grad: XC    :       0.00u       0.00s 0.00000100w      1 call
+CIWave: CIvect write:       0.00u       0.00s   0.006963w    554 calls
+CIWave: CIvect read:       0.00u       0.00s   0.008116w   2771 calls
+CIWave: s2  :       0.07u       0.00s   0.035465w    358 calls
+CIWave: s3  :       0.07u       0.00s   0.033633w   1439 calls
+CIWave: s1  :       0.00u       0.00s   0.000227w    105 calls
+CIWave: s3_mt:       0.00u       0.00s   0.013805w   1827 calls
+CIWave: opdm:       0.00u       0.00s   0.001031w     11 calls
+CIWave: MCSCF integral transform:       0.02u       0.12s   0.113020w     10 calls
+CIWave: tpdm:       0.00u       0.00s   0.001042w     10 calls
+SOMCSCF: Compute Gradient:       0.05u       0.07s   0.022356w     10 calls
+SOMCSCF: Q matrix:       0.00u       0.08s   0.021750w     16 calls
+SOMCSCF: Approximate hessian:       0.00u       0.00s   0.000100w     11 calls
+SOMCSCF: Rotated fock:       0.03u       0.02s   0.026921w      6 calls
+SOMCSCF: Qk matrix:       0.00u       0.02s   0.017313w      6 calls
+ABCD:new    :       0.02u       0.00s   0.036463w     27 calls
+ABCD:S      :       0.00u       0.00s   0.002115w     27 calls
+ABCD:A      :       0.00u       0.00s   0.002129w     27 calls
+ABCD:axpy   :       0.02u       0.00s   0.028047w     27 calls
+DFMP2 Singles:       0.00u       0.00s   0.000563w      3 calls
+DFMP2 Aia   :       1.93u       0.25s   1.230107w      3 calls
+DFMP2 (A|mn):       1.52u       0.02s   0.905342w      3 calls
+DFMP2 (A|mn)C_mi:       0.10u       0.13s   0.039142w      3 calls
+DFMP2 (A|mi)C_na:       0.02u       0.00s   0.018288w      3 calls
+DFMP2 Aia Write:       0.00u       0.00s   0.007132w      3 calls
+DFMP2 Qia   :       0.72u       0.10s   0.388447w      3 calls
+DFMP2 Metric:       0.62u       0.05s   0.337796w      3 calls
+DFMP2 Aia Read:       0.00u       0.00s   0.003944w      3 calls
+DFMP2 (Q|A)(A|ia):       0.10u       0.02s   0.015604w      3 calls
+DFMP2 Qia Write:       0.00u       0.02s   0.005510w      3 calls
+DFMP2 Energy:       0.17u       0.02s   0.111445w      3 calls
+DFMP2 Qia Read:       0.00u       0.00s   0.003205w      6 calls
+DF Integrals       :       0.62u       0.18s 0.46143400w      1 call
+W Integrals        :       0.00u       0.00s 0.00090300w      1 call
+Elst10             :       0.00u       0.00s 0.00005200w      1 call
+Exch10             :       0.00u       0.00s 0.00277900w      1 call
+Exch10 S^2         :       0.00u       0.00s 0.00050000w      1 call
+Ind20              :       0.22u       0.08s 0.17628100w      1 call
+Exch-Ind20         :       0.02u       0.00s 0.00832600w      1 call
+Exch-Disp20 N^5    :       0.07u       0.15s 0.12890600w      1 call
+Exch-Disp20 N^4    :       0.43u       0.15s 0.25857900w      1 call
+V: Grid     :       0.03u       0.00s 0.02811600w      1 call
+RKS: Form V :       2.58u       0.13s   1.523578w      8 calls
+V: D        :       0.00u       0.00s   0.000086w      8 calls
+V: USO2AO   :       0.00u       0.00s   0.002286w      8 calls
+V: V        :       2.58u       0.13s   1.520866w      8 calls
+Properties  :       1.32u       0.13s   0.766039w    552 calls
+Points      :       1.08u       0.00s   0.551704w    552 calls
+Functional  :       1.00u       0.00s   0.575357w    552 calls
+V_XC        :       0.27u       0.00s   0.175049w    552 calls
+LSDA        :       0.17u       0.00s   0.094252w   1104 calls
+GGA         :       0.10u       0.00s   0.072868w    552 calls
+V: AO2USO   :       0.00u       0.00s   0.000166w      8 calls
+
+***********************************************************
